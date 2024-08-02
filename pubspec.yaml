@@ -1,0 +1,46 @@
+name: fin_glow
+description: "A new Flutter project."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ">=3.4.4 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  video_player: ^2.2.19
+  flutter_native_splash: ^2.4.1
+  convex_bottom_bar: ^3.0.0
+  image_picker: ^0.8.4+7
+  icons_plus: ^5.0.0 
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+  flutter_launcher_icons: ^0.13.1
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/icon_app.png"
+
+flutter:
+  uses-material-design: true
+  fonts:
+    - family: Montserrat
+      fonts:
+        - asset: assets/styles/Montserrat.ttf
+    - family: Raleway
+      fonts:
+        - asset: assets/styles/Raleway.ttf
+  assets:
+    - assets/images/logo_vertical.png
+    - assets/images/APPSPLASH.mp4
+    - assets/images/deposit_icon.png
+    - assets/images/transfer_icon.png
+    - assets/images/icon_app.png
+    - assets/images/clabe_icon.png
+    - assets/images/card_basic.png
+    - assets/images/card_gold.png
