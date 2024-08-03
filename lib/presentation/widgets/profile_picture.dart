@@ -45,7 +45,7 @@ class ProfilePictureWidgetState extends State<ProfilePictureWidget> {
               radius: 30,
               backgroundImage: _image != null
                   ? FileImage(_image!)
-                  : const AssetImage('assets/default_profile.png')
+                  : const AssetImage('assets/images/icon_app.png')
                       as ImageProvider,
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())

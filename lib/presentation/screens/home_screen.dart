@@ -55,7 +55,6 @@ class HomeScreenState extends State<HomeScreen> {
   ];
 
   static const List<Widget> _widgetOptions = <Widget>[
-    Center(child: CustomText(text: '')),
     AnalyticsScreen(),
     StoreScreen(),
     MoreScreen(),
@@ -77,248 +76,262 @@ class HomeScreenState extends State<HomeScreen> {
     );
 
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Container(
-            decoration: const BoxDecoration(
-              gradient: RadialGradient(
-                colors: [
-                  Color.fromRGBO(1, 19, 48, 1),
-                  Color.fromRGBO(4, 38, 92, 1),
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: RadialGradient(
+            colors: [
+              Color.fromRGBO(1, 19, 48, 1),
+              Color.fromRGBO(4, 38, 92, 1),
+            ],
+            center: Alignment.center,
+            radius: 1.0,
+          ),
+        ),
+        child: SafeArea(
+          child: _selectedIndex == 0
+              ? SingleChildScrollView(
+                  child: buildHomeContent(),
+                )
+              : _widgetOptions[_selectedIndex - 1],
+        ),
+      ),
+      bottomNavigationBar: CurvedNavigationBar(onItemTapped: _onItemTapped),
+    );
+  }
+
+  Widget buildHomeContent() {
+    return Column(
+      children: [
+        const Padding(
+          padding: EdgeInsets.all(30.0),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              ProfilePictureWidget(),
+              SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '¡Bienvenido de nuevo!',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      color: Colors.white,
+                      fontSize: 19,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                  CustomText(text: 'Usuario'),
                 ],
-                center: Alignment.center,
-                radius: 1.0,
+              ),
+            ],
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Monto disponible:',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              Text(
+                '\$${availableAmount.toStringAsFixed(2)}',
+                style: const TextStyle(
+                  fontFamily: 'Montserrat',
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 15),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: 5),
+              LinearGradientIndicator(
+                value: availableAmount / totalAmount,
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 50.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconContainer(
+                  imagePath: 'assets/images/deposit_icon.png',
+                  label: 'Ingresar'),
+              IconContainer(
+                  imagePath: 'assets/images/transfer_icon.png',
+                  label: 'Transferir'),
+              IconContainer(
+                  imagePath: 'assets/images/clabe_icon.png', label: 'Ingresar'),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 30.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Tarjeta',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          child: Container(
+            width: double.infinity,
+            constraints: const BoxConstraints(maxWidth: 300, maxHeight: 150),
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(76, 16, 57, 121),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(
+                color: const Color(0xFF40A2F1),
+                width: 2,
+              ),
+              gradient: const LinearGradient(
+                colors: [
+                  Color(0xFF40A2F1),
+                  Color(0xFF103979),
+                ],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: Center(
+              child: Image.asset(
+                'assets/images/card_basic.png',
+                width: 200,
+                height: 200,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text(
+                'Últimos movimientos:',
+                style: TextStyle(
+                  fontFamily: 'Montserrat',
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
+              TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/seeAll');
+                  },
+                  child: const Text(
+                    'Ver todos',
+                    style: TextStyle(
+                      fontFamily: 'Montserrat',
+                      color: Color.fromRGBO(34, 221, 187, 1),
+                      fontWeight: FontWeight.w900,
+                    ),
+                  )),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 30.0),
+          child: Container(
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(76, 16, 57, 121),
+              borderRadius: BorderRadius.circular(28),
+              border: Border.all(
+                color: const Color(0xFF40A2F1),
+                width: 2,
               ),
             ),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (_selectedIndex == 0)
-                  const Padding(
-                    padding: EdgeInsets.all(30.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        ProfilePictureWidget(),
-                        SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '¡Bienvenido de nuevo!',
-                              style: TextStyle(
+                SizedBox(
+                  height: 300,
+                  child: ListView.builder(
+                    itemCount: movements.length > 5 ? 5 : movements.length,
+                    itemBuilder: (context, index) {
+                      final movement = movements[index];
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 5.0, horizontal: 15.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  movement['title']!,
+                                  style: const TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    color: Color(0xFF40A2F1),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                Text(
+                                  movement['amount']!,
+                                  style: const TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 15.0),
+                            child: Text(
+                              movement['date']!,
+                              style: const TextStyle(
                                 fontFamily: 'Montserrat',
                                 color: Colors.white,
-                                fontSize: 19,
-                                fontWeight: FontWeight.w900,
+                                fontWeight: FontWeight.w400,
                               ),
                             ),
-                            CustomText(text: 'Usuario'),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                if (_selectedIndex == 0)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        const Text(
-                          'Monto disponible:',
-                          style: TextStyle(
-                            fontFamily: 'Montserrat',
-                            color: Colors.white,
-                            fontWeight: FontWeight.w900,
                           ),
-                        ),
-                        Text(
-                          '\$${availableAmount.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontFamily: 'Montserrat',
-                            color: Colors.white,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                const SizedBox(height: 15),
-                if (_selectedIndex == 0)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const SizedBox(height: 5),
-                        LinearGradientIndicator(
-                          value: availableAmount / totalAmount,
-                        ),
-                        const SizedBox(height: 10),
-                      ],
-                    ),
-                  ),
-                const SizedBox(height: 20),
-                if (_selectedIndex == 0)
-                  const Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 50.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        IconContainer(
-                            imagePath: 'assets/images/deposit_icon.png',
-                            label: 'Ingresar'),
-                        IconContainer(
-                            imagePath: 'assets/images/transfer_icon.png',
-                            label: 'Transferir'),
-                        IconContainer(
-                            imagePath: 'assets/images/clabe_icon.png',
-                            label: 'Ingresar'),
-                      ],
-                    ),
-                  ),
-                const SizedBox(height: 20),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 30.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Tarjeta',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                  child: Container(
-                    width: 300,
-                    height: 150,
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(76, 16, 57, 121),
-                      borderRadius: BorderRadius.circular(28),
-                      border: Border.all(
-                        color: const Color(0xFF40A2F1),
-                        width: 2,
-                      ),
-                      gradient: const LinearGradient(
-                        colors: [
-                          Color(0xFF40A2F1),
-                          Color(0xFF103979),
+                          const Divider(color: Colors.white),
                         ],
-                        begin: Alignment.topLeft,
-                        end: Alignment.bottomRight,
-                      ),
-                    ),
-                    child: Center(
-                      child: Image.asset(
-                        'assets/images/card_basic.png',
-                        width: 200,
-                        height: 200,
-                      ),
-                    ),
+                      );
+                    },
                   ),
                 ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 30.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(76, 16, 57, 121),
-                      borderRadius: BorderRadius.circular(28),
-                      border: Border.all(
-                        color: const Color(0xFF40A2F1),
-                        width: 2,
-                      ),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.all(15.0),
-                          child: Text(
-                            'Últimos movimientos',
-                            style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              color: Colors.white,
-                              fontSize: 16,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          height: 200,
-                          child: ListView.builder(
-                            itemCount:
-                                movements.length > 5 ? 5 : movements.length,
-                            itemBuilder: (context, index) {
-                              final movement = movements[index];
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 5.0, horizontal: 15.0),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          movement['title']!,
-                                          style: const TextStyle(
-                                            fontFamily: 'Montserrat',
-                                            color: Color(0xFF40A2F1),
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                        Text(
-                                          movement['amount']!,
-                                          style: const TextStyle(
-                                            fontFamily: 'Montserrat',
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 15.0),
-                                    child: Text(
-                                      movement['date']!,
-                                      style: const TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w400,
-                                      ),
-                                    ),
-                                  ),
-                                  const Divider(color: Colors.white),
-                                ],
-                              );
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 20),
-                // Aquí se agregará el contenido de la pantalla seleccionada
-                _widgetOptions.elementAt(_selectedIndex),
               ],
             ),
           ),
         ),
-      ),
-      bottomNavigationBar: CurvedNavigationBar(onItemTapped: _onItemTapped),
+        const SizedBox(height: 20),
+      ],
     );
   }
 }

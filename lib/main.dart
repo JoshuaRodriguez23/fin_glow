@@ -1,3 +1,4 @@
+import 'package:fin_glow/presentation/screens/see_all_screen.dart';
 import 'package:flutter/material.dart';
 import './presentation/screens/login_screen.dart';
 import './presentation/screens/register_screen.dart';
@@ -22,6 +23,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/register': (context) => const RegisterScreen(),
         '/home': (context) => const HomeScreen(),
+        '/seeAll': (context) => const SeeAllScreen(),
       },
     );
   }
