@@ -40,13 +40,18 @@ class IconContainer extends StatelessWidget {
         children: [
           Image.asset(imagePath, width: width * 0.5, height: height * 0.5),
           const SizedBox(height: 5),
-          Text(
-            label,
-            style: const TextStyle(
+          Center(
+            // Agrega el widget Center aquí
+            child: Text(
+              label,
+              textAlign: TextAlign.center, // Asegura que el texto esté centrado
+              style: const TextStyle(
                 fontFamily: 'Montserrat',
                 color: Colors.white,
                 fontWeight: FontWeight.w500,
-                fontSize: 10),
+                fontSize: 10,
+              ),
+            ),
           ),
         ],
       ),

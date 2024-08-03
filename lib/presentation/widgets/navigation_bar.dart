@@ -44,7 +44,7 @@ class CurvedNavigationBar extends StatelessWidget {
         initialActiveIndex: 0,
         onTap: onItemTapped,
         backgroundColor: Colors.transparent,
-        activeColor: Color.fromARGB(216, 0, 115, 209),
+        activeColor: const Color.fromARGB(216, 0, 115, 209),
         height: 60,
       ),
     );

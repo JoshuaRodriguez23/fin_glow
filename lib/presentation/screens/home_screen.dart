@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../widgets/navigation_bar.dart';
@@ -21,38 +22,22 @@ class HomeScreenState extends State<HomeScreen> {
   final double totalAmount = 20000;
   final double availableAmount = 10000;
 
-  final List<Map<String, String>> movements = [
-    {
-      'title': 'Depósito',
-      'amount': '\$500.00',
-      'date': '01/08/2024',
-    },
-    {
-      'title': 'Transferencia',
-      'amount': '\$200.00',
-      'date': '31/07/2024',
-    },
-    {
-      'title': 'Pago de servicio',
-      'amount': '\$300.00',
-      'date': '30/07/2024',
-    },
-    {
-      'title': 'Retiro',
-      'amount': '\$150.00',
-      'date': '29/07/2024',
-    },
-    {
-      'title': 'Compra en tienda',
-      'amount': '\$80.00',
-      'date': '28/07/2024',
-    },
-    {
-      'title': 'Suscripción mensual',
-      'amount': '\$20.00',
-      'date': '27/07/2024',
-    },
-  ];
+  List<Map<String, dynamic>> movements = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadJsonData();
+  }
+
+  Future<void> loadJsonData() async {
+    final String response =
+        await rootBundle.loadString('assets/json/movements.json');
+    final data = await json.decode(response) as List;
+    setState(() {
+      movements = data.map((e) => e as Map<String, dynamic>).toList();
+    });
+  }
 
   static const List<Widget> _widgetOptions = <Widget>[
     AnalyticsScreen(),
@@ -199,33 +184,37 @@ class HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
-        const SizedBox(height: 20),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
-          child: Container(
-            width: double.infinity,
-            constraints: const BoxConstraints(maxWidth: 300, maxHeight: 150),
-            decoration: BoxDecoration(
-              color: const Color.fromARGB(76, 16, 57, 121),
-              borderRadius: BorderRadius.circular(28),
-              border: Border.all(
-                color: const Color(0xFF40A2F1),
-                width: 2,
+          child: GestureDetector(
+            onTap: () {
+              Navigator.pushNamed(context, '/cardDetails');
+            },
+            child: Container(
+              width: double.infinity,
+              constraints: const BoxConstraints(maxWidth: 300, maxHeight: 150),
+              decoration: BoxDecoration(
+                color: const Color.fromARGB(76, 16, 57, 121),
+                borderRadius: BorderRadius.circular(28),
+                border: Border.all(
+                  color: const Color(0xFF40A2F1),
+                  width: 2,
+                ),
+                gradient: const LinearGradient(
+                  colors: [
+                    Color(0xFF40A2F1),
+                    Color(0xFF103979),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
               ),
-              gradient: const LinearGradient(
-                colors: [
-                  Color(0xFF40A2F1),
-                  Color(0xFF103979),
-                ],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-            ),
-            child: Center(
-              child: Image.asset(
-                'assets/images/card_basic.png',
-                width: 200,
-                height: 200,
+              child: Center(
+                child: Image.asset(
+                  'assets/images/card_basic.png',
+                  width: 200,
+                  height: 200,
+                ),
               ),
             ),
           ),
@@ -298,7 +287,7 @@ class HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 Text(
-                                  movement['amount']!,
+                                  '\$${movement['amount'].toStringAsFixed(2)}',
                                   style: const TextStyle(
                                     fontFamily: 'Montserrat',
                                     color: Colors.white,

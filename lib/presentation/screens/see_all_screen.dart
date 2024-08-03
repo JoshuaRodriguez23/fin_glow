@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'package:fin_glow/presentation/screens/details_movement_screen.dart';
 import 'package:flutter/material.dart';
-import 'package:fl_chart/fl_chart.dart';
+import 'package:flutter/services.dart';
 import 'package:icons_plus/icons_plus.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/pie_chart.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,23 +21,41 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class SeeAllScreen extends StatelessWidget {
+class SeeAllScreen extends StatefulWidget {
   const SeeAllScreen({super.key});
 
   @override
+  SeeAllScreenState createState() => SeeAllScreenState();
+}
+
+class SeeAllScreenState extends State<SeeAllScreen> {
+  List<Map<String, dynamic>> movements = [];
+
+  @override
+  void initState() {
+    super.initState();
+    loadJsonData();
+  }
+
+  Future<void> loadJsonData() async {
+    final String response =
+        await rootBundle.loadString('assets/json/movements.json');
+    final data = await json.decode(response) as List;
+    setState(() {
+      movements = data.map((e) => e as Map<String, dynamic>).toList();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    const double amazonAmount = 1230.60;
-    const double mcdonaldsAmount = 2320.90;
-    const double appleAmount = 12000.00;
-    const double homeDepotAmount = 5000.10;
+    final double totalAmount =
+        movements.fold(0.0, (sum, item) => sum + (item['amount'] as double));
 
-    const double totalAmount =
-        amazonAmount + mcdonaldsAmount + appleAmount + homeDepotAmount;
-
-    const double amazonPercentage = (amazonAmount / totalAmount) * 100;
-    const double mcdonaldsPercentage = (mcdonaldsAmount / totalAmount) * 100;
-    const double applePercentage = (appleAmount / totalAmount) * 100;
-    const double homeDepotPercentage = (homeDepotAmount / totalAmount) * 100;
+    final List<double> percentages = totalAmount > 0
+        ? movements
+            .map((item) => (item['amount'] as double) / totalAmount * 100)
+            .toList()
+        : [];
 
     return Scaffold(
       body: GestureDetector(
@@ -54,30 +76,8 @@ class SeeAllScreen extends StatelessWidget {
           child: SafeArea(
             child: Column(
               children: [
-                Padding(
-                  padding: EdgeInsets.all(30.0),
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.arrow_back, color: Colors.white),
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                      ),
-                      const Expanded(
-                        child: Center(
-                          child: Text(
-                            'Historial',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 24,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
+                const CustomAppBar(
+                  title: 'Historial',
                 ),
                 const SizedBox(height: 20),
                 Padding(
@@ -86,66 +86,18 @@ class SeeAllScreen extends StatelessWidget {
                     aspectRatio: 2.0,
                     child: Stack(
                       children: [
-                        PieChart(
-                          PieChartData(
-                            centerSpaceRadius: 70,
-                            sections: [
-                              PieChartSectionData(
-                                color: Colors.red,
-                                value: amazonPercentage,
-                                radius: 40,
-                                badgeWidget:
-                                    const _BadgeWidget(icon: Bootstrap.amazon),
-                                showTitle: false,
-                              ),
-                              PieChartSectionData(
-                                color: Colors.orange,
-                                value: mcdonaldsPercentage,
-                                radius: 40,
-                                badgeWidget: const _BadgeWidget(
-                                    icon: LineAwesome.microchip_solid),
-                                showTitle: false,
-                              ),
-                              PieChartSectionData(
-                                color: Colors.green,
-                                value: applePercentage,
-                                radius: 40,
-                                badgeWidget:
-                                    const _BadgeWidget(icon: Bootstrap.apple),
-                                showTitle: false,
-                              ),
-                              PieChartSectionData(
-                                color: Colors.purple,
-                                value: homeDepotPercentage,
-                                radius: 40,
-                                badgeWidget: const _BadgeWidget(
-                                    icon: Bootstrap.airplane_engines),
-                                showTitle: false,
-                              ),
-                            ],
-                          ),
+                        ExpensePieChart(
+                          amazonPercentage:
+                              percentages.isNotEmpty ? percentages[0] : 0.0,
+                          mcdonaldsPercentage:
+                              percentages.length > 1 ? percentages[1] : 0.0,
+                          applePercentage:
+                              percentages.length > 2 ? percentages[2] : 0.0,
+                          homeDepotPercentage:
+                              percentages.length > 3 ? percentages[3] : 0.0,
                         ),
-                        const Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(
-                                '\$$totalAmount',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              Text(
-                                'Balance de gastos',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                    fontFamily: 'Raleway'),
-                              ),
-                            ],
-                          ),
+                        Center(
+                          child: ExpenseTotalAmount(totalAmount: totalAmount),
                         ),
                       ],
                     ),
@@ -153,59 +105,18 @@ class SeeAllScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 35),
                 Expanded(
-                  child: ListView(
-                    children: const [
-                      ExpenseItem(
-                        icon: Bootstrap.amazon,
-                        title: "Amazon",
-                        date: "Abril 17, 2023",
-                        amount: amazonAmount,
-                      ),
-                      ExpenseItem(
-                        icon: LineAwesome.microchip_solid,
-                        title: "McDonalds",
-                        date: "Marzo 29, 2023",
-                        amount: mcdonaldsAmount,
-                      ),
-                      ExpenseItem(
-                        icon: Bootstrap.apple,
-                        title: "Apple",
-                        date: "Marzo 10, 2023",
-                        amount: appleAmount,
-                      ),
-                      ExpenseItem(
-                        icon: Bootstrap.airplane_engines,
-                        title: "Home Depot",
-                        date: "Febrero 25, 2023",
-                        amount: homeDepotAmount,
-                      ),
-                    ],
+                  child: ExpenseList(
+                    items: movements.map((movement) {
+                      return ExpenseItemData(
+                        icon: getIconForTitle(movement['title'] as String),
+                        title: movement['title'] as String,
+                        date: movement['date'] as String,
+                        amount: movement['amount'] as double,
+                      );
+                    }).toList(),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 20.0),
-                  child: TextButton(
-                    onPressed: () {},
-                    child: const Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          'Ver más',
-                          style: TextStyle(
-                            color: Color.fromRGBO(64, 162, 241, 1),
-                            fontSize: 18,
-                            decoration: TextDecoration.underline,
-                          ),
-                        ),
-                        SizedBox(height: 5),
-                        Icon(
-                          Bootstrap.chevron_down,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                const ViewMoreButton(),
               ],
             ),
           ),
@@ -213,69 +124,196 @@ class SeeAllScreen extends StatelessWidget {
       ),
     );
   }
+
+  IconData getIconForTitle(String title) {
+    switch (title) {
+      case 'Amazon':
+        return Bootstrap.cart;
+      case 'McDonald\'s':
+        return Bootstrap.cup_straw;
+      case 'Apple':
+        return Bootstrap.phone;
+      case 'Home Depot':
+        return Bootstrap.house_door;
+      case 'Starbucks':
+        return Bootstrap.cup_hot;
+      case 'Netflix':
+        return Bootstrap.film;
+      case 'Spotify':
+        return Bootstrap.music_note;
+      case 'Uber':
+        return Bootstrap.car_front;
+      case 'Walmart':
+        return Bootstrap.cart4;
+      case 'Subway':
+        return Bootstrap.shop;
+      case 'Best Buy':
+        return Bootstrap.tv;
+      case 'Target':
+        return Bootstrap.basket;
+      case 'Nike':
+        return Bootstrap.shop;
+      case 'Adidas':
+        return Bootstrap.suit_heart;
+      case 'Grocery Store':
+        return Bootstrap.basket3;
+      case 'Gas Station':
+        return Bootstrap.fuel_pump;
+      case 'Gym':
+        return Bootstrap.heart;
+      case 'Pharmacy':
+        return Bootstrap.capsule;
+      case 'Book Store':
+        return Bootstrap.book;
+      case 'Electronics':
+        return Bootstrap.laptop;
+      default:
+        return Bootstrap.question;
+    }
+  }
 }
 
-class _BadgeWidget extends StatelessWidget {
-  final IconData icon;
+class ExpenseTotalAmount extends StatelessWidget {
+  final double totalAmount;
 
-  const _BadgeWidget({required this.icon});
+  const ExpenseTotalAmount({required this.totalAmount, super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 30,
-      height: 30,
-      decoration: const BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.white,
-      ),
-      child: Icon(icon, size: 18, color: Colors.black),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          '\$$totalAmount',
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const Text(
+          'Balance de gastos',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+            fontFamily: 'Raleway',
+          ),
+        ),
+      ],
     );
   }
 }
 
-class ExpenseItem extends StatelessWidget {
+class ExpenseList extends StatelessWidget {
+  final List<ExpenseItemData> items;
+
+  const ExpenseList({required this.items, super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        return ExpenseItem(data: items[index]);
+      },
+    );
+  }
+}
+
+class ViewMoreButton extends StatelessWidget {
+  const ViewMoreButton({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 20.0),
+      child: TextButton(
+        onPressed: () {
+          Navigator.pushNamed(context, '/seeMore');
+        },
+        child: const Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Ver más',
+              style: TextStyle(
+                color: Color.fromRGBO(64, 162, 241, 1),
+                fontSize: 18,
+                decoration: TextDecoration.underline,
+              ),
+            ),
+            SizedBox(height: 5),
+            Icon(
+              Bootstrap.chevron_down,
+              color: Colors.white,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class ExpenseItemData {
   final IconData icon;
   final String title;
   final String date;
   final double amount;
 
-  const ExpenseItem({
+  ExpenseItemData({
     required this.icon,
     required this.title,
     required this.date,
     required this.amount,
+  });
+}
+
+class ExpenseItem extends StatelessWidget {
+  final ExpenseItemData data;
+
+  const ExpenseItem({
+    required this.data,
     super.key,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 30.0),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(154, 10, 89, 89),
-        borderRadius: BorderRadius.circular(28),
-      ),
-      child: ListTile(
-        leading: Icon(icon, size: 40.0),
-        title: Text(
-          title,
-          style: const TextStyle(
-            color: Color.fromARGB(255, 64, 161, 241),
-            fontSize: 18,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => ExpenseDetailScreen(data: data),
           ),
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 5.0, horizontal: 30.0),
+        decoration: BoxDecoration(
+          color: const Color.fromARGB(154, 10, 89, 89),
+          borderRadius: BorderRadius.circular(28),
         ),
-        subtitle: Text(
-          date,
-          style: const TextStyle(
-            color: Colors.white,
+        child: ListTile(
+          leading: Icon(data.icon, size: 40.0),
+          title: Text(
+            data.title,
+            style: const TextStyle(
+              color: Color.fromARGB(255, 64, 161, 241),
+              fontSize: 18,
+            ),
           ),
-        ),
-        trailing: Text(
-          '-\$${amount.toStringAsFixed(2)}',
-          style: const TextStyle(
-            color: Colors.green,
-            fontSize: 18,
+          subtitle: Text(
+            data.date,
+            style: const TextStyle(
+              color: Colors.white,
+            ),
+          ),
+          trailing: Text(
+            '-\$${data.amount.toStringAsFixed(2)}',
+            style: const TextStyle(
+              color: Colors.green,
+              fontSize: 18,
+            ),
           ),
         ),
       ),
