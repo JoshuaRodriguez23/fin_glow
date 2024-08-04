@@ -164,23 +164,23 @@ class MoreScreenState extends State<MoreScreen> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 50.0),
-                  child: Row(
-                    children: [
-                      const Icon(Bootstrap.headset, color: Colors.white),
-                      const SizedBox(width: 10),
-                      GestureDetector(
-                        onTap: _financialAdvisor,
-                        child: const Text(
+                GestureDetector(
+                  onTap: _financialAdvisor,
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 50.0),
+                    child: Row(
+                      children: [
+                        Icon(Bootstrap.headset, color: Colors.white),
+                        SizedBox(width: 10),
+                        Text(
                           'Asesor financiero',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white,
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -208,23 +208,23 @@ class MoreScreenState extends State<MoreScreen> {
                   ),
                 ),
                 const SizedBox(height: 40),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 50.0),
-                  child: Row(
-                    children: [
-                      const Icon(Bootstrap.calendar_heart, color: Colors.white),
-                      const SizedBox(width: 10),
-                      GestureDetector(
-                        onTap: _seminarsAndEvents,
-                        child: const Text(
+                GestureDetector(
+                  onTap: _seminarsAndEvents,
+                  child: const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 50.0),
+                    child: Row(
+                      children: [
+                        Icon(Bootstrap.calendar_heart, color: Colors.white),
+                        SizedBox(width: 10),
+                        Text(
                           'Seminarios y eventos',
                           style: TextStyle(
                             fontSize: 16,
                             color: Colors.white,
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 20),
