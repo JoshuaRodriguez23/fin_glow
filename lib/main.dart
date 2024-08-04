@@ -1,9 +1,10 @@
-import 'package:fin_glow/presentation/screens/card_details_screen.dart';
-import 'package:fin_glow/presentation/screens/financial_advisor_screen.dart';
-import 'package:fin_glow/presentation/screens/profile_screen.dart';
-import 'package:fin_glow/presentation/screens/see_all_screen.dart';
-import 'package:fin_glow/presentation/screens/seminary_and_events_screen.dart';
 import 'package:flutter/material.dart';
+import './presentation/screens/card_details_screen.dart';
+import './presentation/screens/financial_advisor_screen.dart';
+import './presentation/screens/profile_screen.dart';
+import './presentation/screens/see_all_screen.dart';
+import './presentation/screens/seminary_and_events_screen.dart';
+import './presentation/screens/transfer_screen.dart';
 import './presentation/screens/login_screen.dart';
 import './presentation/screens/register_screen.dart';
 import './presentation/widgets/splashscreen.dart';
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
         '/profile': (context) => const ProfileScreen(),
         '/financialAdvisor': (context) => const FinancialAdvisorScreen(),
         '/seminaryEvents': (context) => const SeminaryAndEventsScreen(),
+        '/transfer': (context) => const TransferScreen(),
       },
     );
   }

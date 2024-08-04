@@ -151,18 +151,23 @@ class HomeScreenState extends State<HomeScreen> {
           ),
         ),
         const SizedBox(height: 20),
-        const Padding(
+        Padding(
           padding: EdgeInsets.symmetric(horizontal: 50.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              IconContainer(
+              const IconContainer(
                   imagePath: 'assets/images/deposit_icon.png',
                   label: 'Ingresar'),
-              IconContainer(
-                  imagePath: 'assets/images/transfer_icon.png',
-                  label: 'Transferir'),
-              IconContainer(
+              GestureDetector(
+                onTap: () {
+                  Navigator.pushNamed(context, '/transfer');
+                },
+                child: const IconContainer(
+                    imagePath: 'assets/images/transfer_icon.png',
+                    label: 'Transferir'),
+              ),
+              const IconContainer(
                   imagePath: 'assets/images/clabe_icon.png', label: 'Ingresar'),
             ],
           ),

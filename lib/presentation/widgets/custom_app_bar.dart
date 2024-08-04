@@ -7,8 +7,8 @@ class CustomAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(30.0),
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10.0),
       child: Row(
         children: [
           IconButton(
@@ -17,6 +17,7 @@ class CustomAppBar extends StatelessWidget {
               Navigator.pop(context);
             },
           ),
+          const SizedBox(width: 10),
           Expanded(
             child: Center(
               child: Text(
@@ -26,6 +27,7 @@ class CustomAppBar extends StatelessWidget {
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
+                textAlign: TextAlign.center,
               ),
             ),
           ),
