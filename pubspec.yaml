@@ -16,6 +16,8 @@ dependencies:
   icons_plus: ^5.0.0 
   fl_chart: ^0.68.0
   logger: ^2.4.0 
+  carousel_slider: ^4.2.1
+  shared_preferences: ^2.3.1
 
 dev_dependencies:
   flutter_test:
@@ -51,3 +53,6 @@ flutter:
     - assets/images/key_icon.png
     - assets/images/power_icon.png
     - assets/images/gear_icon.png
+    - assets/images/image_publicidad.png
+    - assets/images/image_publicidad2.png
+    - assets/images/image_publicidad3.png

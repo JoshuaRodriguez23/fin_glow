@@ -1,7 +1,23 @@
 import 'package:flutter/material.dart';
+import './weekly_screen.dart';
+import '../widgets/oval_navbar.dart';
+import '../widgets/custom_app_bar.dart';
 
-class AnalyticsScreen extends StatelessWidget {
+class AnalyticsScreen extends StatefulWidget {
   const AnalyticsScreen({super.key});
+
+  @override
+  AnalyticsScreenState createState() => AnalyticsScreenState();
+}
+
+class AnalyticsScreenState extends State<AnalyticsScreen> {
+  int _currentIndex = 0;
+
+  final List<Widget> _views = [
+    const WeeklyView(),
+    const WeeklyView(),
+    const WeeklyView(),
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -21,14 +37,26 @@ class AnalyticsScreen extends StatelessWidget {
               radius: 1.0,
             ),
           ),
-          child: const SafeArea(
-            child: Center(
-              child: Text(
-                'Contenido de la pantalla de Estadísticas',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24), // Puedes personalizar el estilo
-              ),
+          child: SafeArea(
+            child: Column(
+              children: [
+                const CustomAppBar(
+                  title: 'Panel financiero',
+                ),
+                const SizedBox(height: 20),
+                OvalNavbar(
+                  options: const ['Semanal', 'Mensual', 'Anual'],
+                  onOptionSelected: (index) {
+                    setState(() {
+                      _currentIndex = index;
+                    });
+                  },
+                ),
+                const SizedBox(height: 40),
+                Expanded(
+                  child: _views[_currentIndex],
+                ),
+              ],
             ),
           ),
         ),

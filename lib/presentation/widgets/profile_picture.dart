@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePictureWidget extends StatefulWidget {
   const ProfilePictureWidget({super.key});
@@ -14,22 +15,45 @@ class ProfilePictureWidgetState extends State<ProfilePictureWidget> {
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
 
-  Future<void> _pickImage() async {
+  @override
+  void initState() {
+    super.initState();
+    _loadImage();
+  }
+
+  Future<void> _loadImage() async {
     setState(() {
       _isLoading = true;
     });
+    final prefs = await SharedPreferences.getInstance();
+    final imagePath = prefs.getString('profile_image_path');
+    if (imagePath != null) {
+      setState(() {
+        _image = File(imagePath);
+      });
+    }
+    setState(() {
+      _isLoading = false;
+    });
+  }
 
+  Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
 
     if (pickedFile != null) {
       setState(() {
-        _image = File(pickedFile.path);
+        _isLoading = true;
+      });
+      final imageFile = File(pickedFile.path);
+      setState(() {
+        _image = imageFile;
+      });
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('profile_image_path', pickedFile.path);
+      setState(() {
+        _isLoading = false;
       });
     }
-
-    setState(() {
-      _isLoading = false;
-    });
   }
 
   @override
@@ -41,17 +65,18 @@ class ProfilePictureWidgetState extends State<ProfilePictureWidget> {
         children: [
           GestureDetector(
             onTap: _pickImage,
-            child: CircleAvatar(
-              radius: 30,
-              backgroundImage: _image != null
-                  ? FileImage(_image!)
-                  : const AssetImage('assets/images/icon_app.png')
-                      as ImageProvider,
-              child: _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : _image == null
-                      ? const Icon(Icons.add_a_photo, size: 30)
-                      : null,
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                CircleAvatar(
+                  radius: 30,
+                  backgroundImage: _image != null
+                      ? FileImage(_image!)
+                      : const AssetImage('assets/images/icon_app.png')
+                          as ImageProvider,
+                ),
+                if (_isLoading) const Center(child: CircularProgressIndicator())
+              ],
             ),
           ),
           const SizedBox(width: 10),
