@@ -1,4 +1,5 @@
 import 'package:fin_glow/domain/repositories/financial_advisor_data_repository.dart';
+import 'package:fin_glow/domain/usecases/financial_advisor_usecase.dart';
 import 'package:fin_glow/presentation/bloc/bloc/financial_advisor_bloc.dart';
 import 'package:fin_glow/presentation/bloc/event/financial_advisor_event.dart';
 import 'package:fin_glow/presentation/bloc/state/financial_advisor_state.dart';
@@ -13,9 +14,10 @@ class FinancialAdvisorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) =>
-          FinancialAdvisorBloc(FinancialAdvisorViewRepository())
-            ..add(FetchFinancialAdvisorData()),
+      create: (context) => FinancialAdvisorBloc(
+          FetchAndValidateFinancialAdvisorData(
+              FinancialAdvisorViewRepository()))
+        ..add(FetchFinancialAdvisorData()),
       child: Scaffold(
         body: BlocBuilder<FinancialAdvisorBloc, FinancialAdvisorState>(
           builder: (context, state) {

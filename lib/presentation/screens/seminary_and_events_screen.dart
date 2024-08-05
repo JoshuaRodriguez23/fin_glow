@@ -12,7 +12,6 @@ class SeminaryAndEventsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dispatch FetchEvents event when the widget is first built
     context.read<EventBloc>().add(FetchEvents());
 
     return Scaffold(

@@ -8,6 +8,7 @@ import 'package:fin_glow/presentation/bloc/event/weekly_event.dart';
 import 'package:fin_glow/presentation/bloc/state/weekly_state.dart';
 import '../widgets/oval_navbar.dart';
 import '../widgets/custom_app_bar.dart';
+import 'package:fin_glow/domain/usecases/weekly_usecase.dart';
 
 class AnalyticsScreen extends StatefulWidget {
   const AnalyticsScreen({super.key});
@@ -24,7 +25,9 @@ class AnalyticsScreenState extends State<AnalyticsScreen> {
   @override
   void initState() {
     super.initState();
-    _weeklyBloc = WeeklyBloc(WeeklyViewRepository());
+    final weeklyRepository = WeeklyViewRepository();
+    final weeklyDataUseCase = WeeklyDataUseCase(weeklyRepository);
+    _weeklyBloc = WeeklyBloc(weeklyDataUseCase);
     _fetchData();
   }
 
@@ -72,14 +75,15 @@ class AnalyticsScreenState extends State<AnalyticsScreen> {
                     child: BlocBuilder<WeeklyBloc, WeeklyState>(
                       builder: (context, state) {
                         if (state is WeeklyLoading) {
-                          return Center(child: CircularProgressIndicator());
+                          return const Center(
+                              child: CircularProgressIndicator());
                         } else if (state is WeeklyLoaded) {
                           _viewsData = [state.data, state.data, state.data];
                           return WeeklyView(data: _viewsData[_currentIndex]);
                         } else if (state is WeeklyError) {
                           return Center(child: Text(state.message));
                         } else {
-                          return Center(child: Text('Unexpected state'));
+                          return const Center(child: Text('Unexpected state'));
                         }
                       },
                     ),

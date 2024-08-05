@@ -1,20 +1,14 @@
-import 'package:fin_glow/domain/repositories/weekly_data_repository.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fin_glow/domain/usecases/weekly_usecase.dart';
 import 'package:fin_glow/presentation/bloc/event/weekly_event.dart';
 import 'package:fin_glow/presentation/bloc/state/weekly_state.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class WeeklyBloc extends Bloc<WeeklyEvent, WeeklyState> {
-  final WeeklyViewRepository repository;
+  final WeeklyDataUseCase weeklyDataUseCase;
 
-  WeeklyBloc(this.repository) : super(WeeklyInitial()) {
+  WeeklyBloc(this.weeklyDataUseCase) : super(WeeklyInitial()) {
     on<FetchWeeklyData>((event, emit) async {
-      emit(WeeklyLoading());
-      try {
-        final data = await repository.fetchWeeklyViewData();
-        emit(WeeklyLoaded(data));
-      } catch (e) {
-        emit(const WeeklyError('Failed to load data'));
-      }
+      await weeklyDataUseCase.call(emit);
     });
   }
 }
