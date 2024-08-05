@@ -1,0 +1,23 @@
+{
+  "title": "Marketplace empresarial",
+  "promotions": [
+    {
+      "image": "assets/images/image_publicidad.png",
+      "route": "/cardDetails"
+    },
+    {
+      "image": "assets/images/image_publicidad2.png",
+      "route": "/cardDetails"
+    },
+    {
+      "image": "assets/images/image_publicidad3.png",
+      "route": "/cardDetails"
+    }
+  ],
+  "navbarOptions": [
+    "Todas",
+    "Meses sin intereses",
+    "Descuentos"
+  ],
+  "promotionsTitle": "Descubre nuestras promociones"
+}

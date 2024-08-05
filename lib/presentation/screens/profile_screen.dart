@@ -1,5 +1,7 @@
-import 'package:fin_glow/presentation/widgets/custom_app_bar.dart';
+import 'package:fin_glow/domain/models/profile_model.dart';
+import 'package:fin_glow/domain/repositories/profile_data_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:fin_glow/presentation/widgets/custom_app_bar.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
@@ -16,10 +18,12 @@ class ProfileScreenState extends State<ProfileScreen> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
+  late Future<List<ProfileOption>> _profileOptionsFuture;
 
   @override
   void initState() {
     super.initState();
+    _profileOptionsFuture = ProfileRepository().fetchProfileOptions();
     _loadImage();
   }
 
@@ -150,49 +154,24 @@ class ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 50),
-                  _buildProfileOption(
-                    title: 'Información personal',
-                    subtitle:
-                        'Información de tu identificación oficial\n y tu actividad fiscal.',
-                    icon: Bootstrap.person,
-                  ),
-                  const SizedBox(height: 50),
-                  _buildProfileOption(
-                    title: 'Datos de tu cuenta',
-                    subtitle: 'Datos que representan la cuenta.',
-                    icon: Bootstrap.file_text,
-                  ),
-                  const SizedBox(height: 50),
-                  _buildProfileOption(
-                    title: 'Seguridad',
-                    subtitle:
-                        'Configuración necesaria para mantener\n a salvo tu cuenta.',
-                    icon: Bootstrap.lock,
-                  ),
-                  const SizedBox(height: 50),
-                  _buildProfileOption(
-                    title: 'Tarjetas',
-                    subtitle: 'Tarjetas guardadas en tu cuenta.',
-                    icon: Bootstrap.credit_card,
-                  ),
-                  const SizedBox(height: 50),
-                  _buildProfileOption(
-                    title: 'Direcciones',
-                    subtitle: 'Direcciones guardadas en tu cuenta.',
-                    icon: Bootstrap.map,
-                  ),
-                  const SizedBox(height: 50),
-                  _buildProfileOption(
-                    title: 'Privacidad',
-                    subtitle: 'Preferencias y control sobre tus datos.',
-                    icon: Bootstrap.eye,
-                  ),
-                  const SizedBox(height: 50),
-                  _buildProfileOption(
-                    title: 'Comunicaciones',
-                    subtitle: 'Elije qué tipo de información quieres recibir.',
-                    icon: Bootstrap.bell,
+                  const SizedBox(height: 20),
+                  FutureBuilder<List<ProfileOption>>(
+                    future: _profileOptionsFuture,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        return Text('Error: ${snapshot.error}');
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Text('No hay opciones disponibles.');
+                      }
+
+                      return Column(
+                        children: snapshot.data!.map((option) {
+                          return _buildProfileOption(option);
+                        }).toList(),
+                      );
+                    },
                   ),
                   const SizedBox(height: 50),
                 ],
@@ -204,33 +183,29 @@ class ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _buildProfileOption({
-    required String title,
-    required String subtitle,
-    required IconData icon,
-  }) {
+  Widget _buildProfileOption(ProfileOption option) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 50.0),
+      padding: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 25.0),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Row(
             children: [
-              Icon(icon, color: Colors.white),
+              Icon(option.icon, color: Colors.white),
               const SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    title,
+                    option.title,
                     style: const TextStyle(
                       fontSize: 16,
                       color: Colors.white,
                     ),
                   ),
                   Text(
-                    subtitle,
+                    option.subtitle,
                     style: const TextStyle(
                       fontSize: 12,
                       color: Colors.white,

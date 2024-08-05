@@ -1,108 +1,116 @@
-import 'package:fin_glow/presentation/widgets/custom_app_bar.dart';
+import 'package:fin_glow/domain/models/financial_advisor_model.dart';
+import 'package:fin_glow/domain/repositories/financial_advisor_data_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:fin_glow/presentation/widgets/custom_app_bar.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-class FinancialAdvisorScreen extends StatelessWidget {
+class FinancialAdvisorScreen extends StatefulWidget {
   const FinancialAdvisorScreen({super.key});
 
   @override
+  FinancialAdvisorScreenState createState() => FinancialAdvisorScreenState();
+}
+
+class FinancialAdvisorScreenState extends State<FinancialAdvisorScreen> {
+  late Future<FinancialAdvisorViewData> financialAdvisorViewData;
+
+  @override
+  void initState() {
+    super.initState();
+    financialAdvisorViewData =
+        FinancialAdvisorViewRepository().fetchFinancialAdvisorViewData();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: RadialGradient(
-              colors: [
-                Color.fromRGBO(1, 19, 48, 1),
-                Color.fromRGBO(4, 38, 92, 1),
-              ],
-              center: Alignment.center,
-              radius: 1.0,
-            ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const CustomAppBar(title: 'Asesor financiero'),
-                const SizedBox(height: 20),
-                const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 50.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '¿Cómo deseas conversar?',
-                        style: TextStyle(
-                          fontFamily: 'Montserrat',
-                          color: Colors.white,
-                          fontWeight: FontWeight.w900,
-                        ),
-                      ),
-                    ],
-                  ),
+    return FutureBuilder<FinancialAdvisorViewData>(
+      future: financialAdvisorViewData,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+
+        final data = snapshot.data!;
+
+        return Scaffold(
+          body: GestureDetector(
+            onTap: () {
+              FocusScope.of(context).unfocus();
+            },
+            child: Container(
+              decoration: const BoxDecoration(
+                gradient: RadialGradient(
+                  colors: [
+                    Color.fromRGBO(1, 19, 48, 1),
+                    Color.fromRGBO(4, 38, 92, 1),
+                  ],
+                  center: Alignment.center,
+                  radius: 1.0,
                 ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(20.0),
-                      child: Column(
+              ),
+              child: SafeArea(
+                child: Column(
+                  children: [
+                    CustomAppBar(title: data.title),
+                    const SizedBox(height: 20),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const SizedBox(height: 20),
-                          _buildOptionContainer(
-                            icon: Bootstrap.chat,
-                            title: 'Chat en tiempo real',
-                            subtitle:
-                                'Te damos las respuestas rápidas\n a preguntas comunes.',
-                          ),
-                          const SizedBox(height: 20),
-                          _buildOptionContainer(
-                            icon: Bootstrap.whatsapp,
-                            title: 'Chat en Whatsapp',
-                            subtitle:
-                                'Te enviaremos un mensaje en menos\n de 10 minutos.',
-                          ),
-                          const SizedBox(height: 20),
-                          _buildOptionContainer(
-                            icon: Bootstrap.telephone,
-                            title: 'Llamada telefónica',
-                            subtitle: 'Te llamaremos en menos de 10 minutos.',
-                          ),
-                          const SizedBox(height: 20),
-                          _buildOptionContainer(
-                            icon: Bootstrap.envelope,
-                            title: 'Formulario electrónico',
-                            subtitle: 'Te responderemos por e-mail.',
-                          ),
-                          const SizedBox(height: 20),
-                          _buildOptionContainer(
-                            icon: Bootstrap.camera_video,
-                            title: 'Videollamada LSM',
-                            subtitle:
-                                'Te ayudaremos a programar una reunión\n con un interprete.',
+                          Text(
+                            data.question,
+                            style: const TextStyle(
+                              fontFamily: 'Montserrat',
+                              color: Colors.white,
+                              fontWeight: FontWeight.w900,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ),
+                    const SizedBox(height: 20),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Column(
+                            children: data.options.map((option) {
+                              return Column(
+                                children: [
+                                  _buildOptionContainer(
+                                    icon: _getIcon(option.icon),
+                                    title: option.title,
+                                    subtitle: option.subtitle,
+                                  ),
+                                  const SizedBox(height: 30),
+                                ],
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
-  Widget _buildOptionContainer(
-      {required IconData icon,
-      required String title,
-      required String subtitle,
-      Color iconColor = Colors.white}) {
+  Widget _buildOptionContainer({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    Color iconColor = Colors.white,
+  }) {
     return Container(
-      width: 350,
+      width: double.infinity,
       height: 100,
       decoration: BoxDecoration(
         color: const Color.fromARGB(76, 16, 57, 121),
@@ -130,34 +138,61 @@ class FinancialAdvisorScreen extends StatelessWidget {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  Icon(icon, color: iconColor)
-                ], // Cambia el color aquí
+                  Icon(icon, color: iconColor),
+                ],
               ),
             ),
             const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        color: Colors.white,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
                   ),
-                ),
-                Text(
-                  subtitle,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
+                  Flexible(
+                    child: Text(
+                      subtitle,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.white,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 2,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ],
         ),
       ),
     );
+  }
+
+  IconData _getIcon(String iconName) {
+    switch (iconName) {
+      case "Bootstrap.chat":
+        return Bootstrap.chat;
+      case "Bootstrap.whatsapp":
+        return Bootstrap.whatsapp;
+      case "Bootstrap.telephone":
+        return Bootstrap.telephone;
+      case "Bootstrap.envelope":
+        return Bootstrap.envelope;
+      case "Bootstrap.camera_video":
+        return Bootstrap.camera_video;
+      default:
+        return Bootstrap.chat;
+    }
   }
 }

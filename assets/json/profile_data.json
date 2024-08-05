@@ -1,0 +1,37 @@
+[
+  {
+    "title": "Información personal",
+    "subtitle": "Información de tu identificación oficial\n y tu actividad fiscal.",
+    "icon": "Bootstrap.person"
+  },
+  {
+    "title": "Datos de tu cuenta",
+    "subtitle": "Datos que representan la cuenta.",
+    "icon": "Bootstrap.file_text"
+  },
+  {
+    "title": "Seguridad",
+    "subtitle": "Configuración necesaria para mantener\n a salvo tu cuenta.",
+    "icon": "Bootstrap.lock"
+  },
+  {
+    "title": "Tarjetas",
+    "subtitle": "Tarjetas guardadas en tu cuenta.",
+    "icon": "Bootstrap.credit_card"
+  },
+  {
+    "title": "Direcciones",
+    "subtitle": "Direcciones guardadas en tu cuenta.",
+    "icon": "Bootstrap.map"
+  },
+  {
+    "title": "Privacidad",
+    "subtitle": "Preferencias y control sobre tus datos.",
+    "icon": "Bootstrap.eye"
+  },
+  {
+    "title": "Comunicaciones",
+    "subtitle": "Elije qué tipo de información quieres recibir.",
+    "icon": "Bootstrap.bell"
+  }
+]

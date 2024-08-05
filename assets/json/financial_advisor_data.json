@@ -1,0 +1,31 @@
+{
+  "title": "Asesor financiero",
+  "question": "¿Cómo deseas conversar?",
+  "options": [
+    {
+      "icon": "Bootstrap.chat",
+      "title": "Chat en tiempo real",
+      "subtitle": "Te damos las respuestas rápidas \na preguntas comunes."
+    },
+    {
+      "icon": "Bootstrap.whatsapp",
+      "title": "Chat en Whatsapp",
+      "subtitle": "Te enviaremos un mensaje en \nmenos de 10 minutos."
+    },
+    {
+      "icon": "Bootstrap.telephone",
+      "title": "Llamada telefónica",
+      "subtitle": "Te llamaremos en menos de 10 minutos."
+    },
+    {
+      "icon": "Bootstrap.envelope",
+      "title": "Formulario electrónico",
+      "subtitle": "Te responderemos por e-mail."
+    },
+    {
+      "icon": "Bootstrap.camera_video",
+      "title": "Videollamada LSM",
+      "subtitle": "Te ayudaremos a programar una \nreunión con un interprete."
+    }
+  ]
+}

@@ -58,3 +58,9 @@ flutter:
     - assets/images/image_publicidad.png
     - assets/images/image_publicidad2.png
     - assets/images/image_publicidad3.png
+    - assets/json/cash_data.json
+    - assets/json/weekly_data.json
+    - assets/json/store_data.json
+    - assets/json/seminary_data.json
+    - assets/json/financial_advisor_data.json
+    - assets/json/profile_data.json

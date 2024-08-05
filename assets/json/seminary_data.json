@@ -1,0 +1,19 @@
+{
+  "events": [
+    {
+      "icon": "Bootstrap.bell",
+      "title": "Recordatorios",
+      "description": "Gestión de riesgos - Daniel López (zoom).\nEvento próximo en 3 días"
+    },
+    {
+      "icon": "Bootstrap.calendar3",
+      "title": "Próximos seminarios",
+      "description": "- Planificación financiera estratégica - Óscar Díaz (Microsoft Teams).\n - Inversiones inteligentes para emprendedores - Mónica López (Google Meet).\n - Contabilidad para NO contadores - Alberto Cruz (Zoom)"
+    },
+    {
+      "icon": "Bootstrap.hand_thumbs_up",
+      "title": "Próximos eventos",
+      "description": "- Conferencia anual de emprendedores \"InnovaTech 2024\" - Panel de expertos internacionales (Presencial y streaming).\n - Expo emprendedor 2024 - Variedad de líderes de startups y tecnología (Presencial) - Encuentro de Networking \"Conecta y Crece\" - Líderes empresariales y mentores (Presencial)."
+    }
+  ]
+}

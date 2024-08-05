@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:fin_glow/domain/repositories/cash_data_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../widgets/navigation_bar.dart';
@@ -19,8 +20,9 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  final double totalAmount = 20000;
-  final double availableAmount = 10000;
+  double availableAmount = 0.0;
+  double totalAmount = 0.0;
+  final CashDataRepository cashDataRepository = CashDataRepository();
 
   List<Map<String, dynamic>> movements = [];
 
@@ -28,6 +30,7 @@ class HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     loadJsonData();
+    loadCashData(); // Cargar datos de efectivo
   }
 
   Future<void> loadJsonData() async {
@@ -36,6 +39,14 @@ class HomeScreenState extends State<HomeScreen> {
     final data = await json.decode(response) as List;
     setState(() {
       movements = data.map((e) => e as Map<String, dynamic>).toList();
+    });
+  }
+
+  Future<void> loadCashData() async {
+    final cashData = await cashDataRepository.fetchCashData();
+    setState(() {
+      availableAmount = cashData.availableAmount;
+      totalAmount = cashData.totalAmount;
     });
   }
 
@@ -144,7 +155,9 @@ class HomeScreenState extends State<HomeScreen> {
             children: [
               const SizedBox(height: 5),
               LinearGradientIndicator(
-                value: availableAmount / totalAmount,
+                value: totalAmount > 0
+                    ? availableAmount / totalAmount
+                    : 0.0, // Evitar división por cero
               ),
               const SizedBox(height: 10),
             ],
@@ -152,7 +165,7 @@ class HomeScreenState extends State<HomeScreen> {
         ),
         const SizedBox(height: 20),
         Padding(
-          padding: EdgeInsets.symmetric(horizontal: 50.0),
+          padding: const EdgeInsets.symmetric(horizontal: 50.0),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -189,6 +202,7 @@ class HomeScreenState extends State<HomeScreen> {
             ],
           ),
         ),
+        const SizedBox(height: 30),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 30.0),
           child: GestureDetector(

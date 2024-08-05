@@ -1,0 +1,18 @@
+{
+  "title": "Dic 2023 - Abr 2024",
+  "income": {
+    "amount": 80200.00,
+    "color": "lightBlueAccent"
+  },
+  "expenses": {
+    "amount": 35229.00,
+    "color": "lightGreenAccent"
+  },
+  "barChartData": [
+    {"month": "Dic", "income": 80, "expenses": 35},
+    {"month": "Ene", "income": 70, "expenses": 30},
+    {"month": "Feb", "income": 60, "expenses": 40},
+    {"month": "Mar", "income": 90, "expenses": 50},
+    {"month": "Abr", "income": 85, "expenses": 45}
+  ]
+}

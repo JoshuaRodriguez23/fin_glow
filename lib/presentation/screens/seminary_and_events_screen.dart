@@ -1,9 +1,26 @@
+import 'package:fin_glow/domain/models/seminary_model.dart';
+import 'package:fin_glow/domain/repositories/seminary_data_repository.dart';
 import 'package:fin_glow/presentation/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
+import 'package:logger/logger.dart';
 
-class SeminaryAndEventsScreen extends StatelessWidget {
+class SeminaryAndEventsScreen extends StatefulWidget {
   const SeminaryAndEventsScreen({super.key});
+
+  @override
+  SeminaryAndEventsScreenState createState() => SeminaryAndEventsScreenState();
+}
+
+class SeminaryAndEventsScreenState extends State<SeminaryAndEventsScreen> {
+  late Future<List<Event>> futureEvents;
+  final Logger logger = Logger();
+
+  @override
+  void initState() {
+    super.initState();
+    futureEvents = EventRepository().fetchEvents();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,6 +43,7 @@ class SeminaryAndEventsScreen extends StatelessWidget {
           child: SafeArea(
             child: SingleChildScrollView(
               child: Column(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   const CustomAppBar(title: 'Seminarios'),
                   const SizedBox(height: 20),
@@ -35,56 +53,46 @@ class SeminaryAndEventsScreen extends StatelessWidget {
                       child: Text(
                         '¡Explora un mundo de conocimientos y oportunidades con FinGlow!',
                         style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 18,
-                            fontFamily: 'Montserrat'),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Buscar...',
-                        hintStyle: const TextStyle(
-                          color: Colors.white54,
-                        ),
-                        filled: true,
-                        fillColor: const Color.fromARGB(76, 16, 57, 121),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                          borderSide: BorderSide.none,
-                        ),
-                        suffixIcon: const Icon(
-                          Bootstrap.search,
                           color: Colors.white,
+                          fontSize: 18,
+                          fontFamily: 'Montserrat',
                         ),
                       ),
-                      style: const TextStyle(color: Colors.white),
                     ),
                   ),
                   const SizedBox(height: 20),
-                  _buildOptionContainer(
-                    icon: Bootstrap.bell,
-                    title: 'Recordatorios',
-                    description:
-                        'Gestión de riesgos - Daniel López (zoom).\nEvento próximo en 3 días',
+                  FutureBuilder<List<Event>>(
+                    future: futureEvents,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const CircularProgressIndicator();
+                      } else if (snapshot.hasError) {
+                        logger.e(
+                            'Error al cargar los eventos: ${snapshot.error}');
+                        return Text(
+                            'Error al cargar los eventos: ${snapshot.error}');
+                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Text('No hay eventos disponibles');
+                      }
+
+                      final events = snapshot.data!;
+                      return Column(
+                        children: events.map((event) {
+                          return Column(
+                            children: [
+                              _buildOptionContainer(
+                                icon: _getIconData(event.icon),
+                                title: event.title,
+                                description: event.description,
+                              ),
+                              const SizedBox(height: 40)
+                            ],
+                          );
+                        }).toList(),
+                      );
+                    },
                   ),
-                  const SizedBox(height: 20),
-                  _buildOptionContainer(
-                    icon: Bootstrap.calendar3,
-                    title: 'Próximos seminarios',
-                    description:
-                        '- Planificación financiera estratégica - Óscar Díaz (Microsoft Teams).\n - Inversiones inteligentes para emprendedores - Mónica López (Google Meet).\n - Contabilidad para NO contadores - Alberto Cruz (Zoom)',
-                  ),
-                  const SizedBox(height: 20),
-                  _buildOptionContainer(
-                    icon: Bootstrap.hand_thumbs_up,
-                    title: 'Próximos eventos',
-                    description:
-                        '- Conferencia anual de emprendedores "InnovaTech 2024" - Panel de expertos internacionales (Presencial y streaming). \n - Expo emprendedor 2024 - Variedad de líderes de startups y tecnología (Presencial) - Encuentro de Networking "Conecta y Crece" - Líderes empresariales y mentores ( Presencial).',
-                  ),
+                  const SizedBox(height: 120),
                 ],
               ),
             ),
@@ -94,10 +102,24 @@ class SeminaryAndEventsScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildOptionContainer(
-      {required IconData icon,
-      required String title,
-      required String description}) {
+  IconData _getIconData(String iconName) {
+    switch (iconName) {
+      case 'Bootstrap.bell':
+        return Bootstrap.bell;
+      case 'Bootstrap.calendar3':
+        return Bootstrap.calendar3;
+      case 'Bootstrap.hand_thumbs_up':
+        return Bootstrap.hand_thumbs_up;
+      default:
+        return Icons.error; // Icono por defecto
+    }
+  }
+
+  Widget _buildOptionContainer({
+    required IconData icon,
+    required String title,
+    required String description,
+  }) {
     return Container(
       width: 350,
       decoration: BoxDecoration(
@@ -142,9 +164,10 @@ class SeminaryAndEventsScreen extends StatelessWidget {
                 description,
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.white,
-                    fontWeight: FontWeight.normal),
+                  fontSize: 12,
+                  color: Colors.white,
+                  fontWeight: FontWeight.normal,
+                ),
               ),
             ),
           ],
