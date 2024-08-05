@@ -1,6 +1,9 @@
-import 'package:fin_glow/domain/models/profile_model.dart';
-import 'package:fin_glow/domain/repositories/profile_data_repository.dart';
+import 'package:fin_glow/presentation/bloc/bloc/profile_bloc.dart';
+import 'package:fin_glow/presentation/bloc/event/profile_event.dart';
+import 'package:fin_glow/presentation/bloc/state/profile_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fin_glow/domain/models/profile_model.dart';
 import 'package:fin_glow/presentation/widgets/custom_app_bar.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:image_picker/image_picker.dart';
@@ -41,12 +44,12 @@ class ProfileScreenState extends State<ProfileScreen> {
   File? _image;
   final ImagePicker _picker = ImagePicker();
   bool _isLoading = false;
-  late Future<List<ProfileOption>> _profileOptionsFuture;
 
   @override
   void initState() {
     super.initState();
-    _profileOptionsFuture = ProfileRepository().fetchProfileOptions();
+    context.read<ProfileBloc>().add(
+        FetchProfileOptions()); // Asegúrate de que FetchProfileOptions esté definido
     _loadImage();
   }
 
@@ -178,22 +181,25 @@ class ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  FutureBuilder<List<ProfileOption>>(
-                    future: _profileOptionsFuture,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
+                  BlocBuilder<ProfileBloc, ProfileState>(
+                    builder: (context, state) {
+                      if (state is ProfileLoading) {
                         return const CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        return Text('Error: ${snapshot.error}');
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Text('No hay opciones disponibles.');
+                      } else if (state is ProfileError) {
+                        return Text('Error: ${state.message}');
+                      } else if (state is ProfileLoaded) {
+                        if (state.profileOptions.isEmpty) {
+                          return const Text('No hay opciones disponibles.');
+                        }
+
+                        return Column(
+                          children: state.profileOptions.map((option) {
+                            return _buildProfileOption(option);
+                          }).toList(),
+                        );
                       }
 
-                      return Column(
-                        children: snapshot.data!.map((option) {
-                          return _buildProfileOption(option);
-                        }).toList(),
-                      );
+                      return Container();
                     },
                   ),
                   const SizedBox(height: 50),

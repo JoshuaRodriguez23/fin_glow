@@ -5,7 +5,9 @@ part 'weekly_model.g.dart';
 @JsonSerializable()
 class WeeklyViewData {
   final String title;
+  @JsonKey(name: 'income')
   final double incomeAmount;
+  @JsonKey(name: 'expenses')
   final double expensesAmount;
   final List<BarChartData> barChartData;
 

@@ -142,7 +142,8 @@ class StoreScreenState extends State<StoreScreen> {
                           ),
                           const SizedBox(height: 30),
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 30.0),
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 30.0),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [

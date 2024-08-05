@@ -6,7 +6,7 @@ class FinancialAdvisorViewRepository {
   Future<FinancialAdvisorViewData> fetchFinancialAdvisorViewData() async {
     final String response =
         await rootBundle.loadString('assets/json/financial_advisor_data.json');
-    final data = await json.decode(response);
+    final data = json.decode(response);
     return FinancialAdvisorViewData.fromJson(data);
   }
 }

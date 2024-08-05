@@ -1,105 +1,99 @@
-import 'package:fin_glow/domain/models/financial_advisor_model.dart';
 import 'package:fin_glow/domain/repositories/financial_advisor_data_repository.dart';
-import 'package:flutter/material.dart';
+import 'package:fin_glow/presentation/bloc/bloc/financial_advisor_bloc.dart';
+import 'package:fin_glow/presentation/bloc/event/financial_advisor_event.dart';
+import 'package:fin_glow/presentation/bloc/state/financial_advisor_state.dart';
 import 'package:fin_glow/presentation/widgets/custom_app_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 
-class FinancialAdvisorScreen extends StatefulWidget {
+class FinancialAdvisorScreen extends StatelessWidget {
   const FinancialAdvisorScreen({super.key});
 
   @override
-  FinancialAdvisorScreenState createState() => FinancialAdvisorScreenState();
-}
-
-class FinancialAdvisorScreenState extends State<FinancialAdvisorScreen> {
-  late Future<FinancialAdvisorViewData> financialAdvisorViewData;
-
-  @override
-  void initState() {
-    super.initState();
-    financialAdvisorViewData =
-        FinancialAdvisorViewRepository().fetchFinancialAdvisorViewData();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return FutureBuilder<FinancialAdvisorViewData>(
-      future: financialAdvisorViewData,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        }
+    return BlocProvider(
+      create: (context) =>
+          FinancialAdvisorBloc(FinancialAdvisorViewRepository())
+            ..add(FetchFinancialAdvisorData()),
+      child: Scaffold(
+        body: BlocBuilder<FinancialAdvisorBloc, FinancialAdvisorState>(
+          builder: (context, state) {
+            if (state is FinancialAdvisorLoading) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (state is FinancialAdvisorError) {
+              return Center(child: Text('Error: ${state.message}'));
+            } else if (state is FinancialAdvisorLoaded) {
+              final data = state.data;
 
-        final data = snapshot.data!;
-
-        return Scaffold(
-          body: GestureDetector(
-            onTap: () {
-              FocusScope.of(context).unfocus();
-            },
-            child: Container(
-              decoration: const BoxDecoration(
-                gradient: RadialGradient(
-                  colors: [
-                    Color.fromRGBO(1, 19, 48, 1),
-                    Color.fromRGBO(4, 38, 92, 1),
-                  ],
-                  center: Alignment.center,
-                  radius: 1.0,
-                ),
-              ),
-              child: SafeArea(
-                child: Column(
-                  children: [
-                    CustomAppBar(title: data.title),
-                    const SizedBox(height: 20),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 50.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            data.question,
-                            style: const TextStyle(
-                              fontFamily: 'Montserrat',
-                              color: Colors.white,
-                              fontWeight: FontWeight.w900,
-                            ),
-                          ),
-                        ],
-                      ),
+              return GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: RadialGradient(
+                      colors: [
+                        Color.fromRGBO(1, 19, 48, 1),
+                        Color.fromRGBO(4, 38, 92, 1),
+                      ],
+                      center: Alignment.center,
+                      radius: 1.0,
                     ),
-                    const SizedBox(height: 20),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        child: Padding(
-                          padding: const EdgeInsets.all(20.0),
-                          child: Column(
-                            children: data.options.map((option) {
-                              return Column(
-                                children: [
-                                  _buildOptionContainer(
-                                    icon: _getIcon(option.icon),
-                                    title: option.title,
-                                    subtitle: option.subtitle,
-                                  ),
-                                  const SizedBox(height: 30),
-                                ],
-                              );
-                            }).toList(),
+                  ),
+                  child: SafeArea(
+                    child: Column(
+                      children: [
+                        CustomAppBar(title: data.title),
+                        const SizedBox(height: 20),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 50.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                data.question,
+                                style: const TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w900,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
-                      ),
+                        const SizedBox(height: 20),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            child: Padding(
+                              padding: const EdgeInsets.all(20.0),
+                              child: Column(
+                                children: data.options.map((option) {
+                                  return Column(
+                                    children: [
+                                      _buildOptionContainer(
+                                        icon: _getIcon(option.icon),
+                                        title: option.title,
+                                        subtitle: option.subtitle,
+                                      ),
+                                      const SizedBox(height: 30),
+                                    ],
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            ),
-          ),
-        );
-      },
+              );
+            }
+            return Container(); // Fallback case
+          },
+        ),
+      ),
     );
   }
 

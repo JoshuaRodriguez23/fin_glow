@@ -7,14 +7,19 @@ class EventRepository {
   Future<List<Event>> fetchEvents() async {
     final Logger logger = Logger();
 
-    final String response =
-        await rootBundle.loadString('assets/json/seminary_data.json');
-    final data = await json.decode(response);
+    try {
+      final String response =
+          await rootBundle.loadString('assets/json/seminary_data.json');
+      final data = json.decode(response);
 
-    logger.d(data); // Imprimir el contenido del JSON
+      logger.d(data);
 
-    return (data['events'] as List)
-        .map((event) => Event.fromJson(event))
-        .toList();
+      return (data['events'] as List)
+          .map((event) => Event.fromJson(event))
+          .toList();
+    } catch (error) {
+      logger.e('Error al cargar los eventos: $error');
+      return [];
+    }
   }
 }

@@ -1,29 +1,20 @@
-import 'package:fin_glow/domain/models/seminary_model.dart';
-import 'package:fin_glow/domain/repositories/seminary_data_repository.dart';
-import 'package:fin_glow/presentation/widgets/custom_app_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:logger/logger.dart';
+import 'package:fin_glow/presentation/bloc/bloc/seminary_bloc.dart';
+import 'package:fin_glow/presentation/bloc/event/seminary_event.dart';
+import 'package:fin_glow/presentation/bloc/state/seminary_state.dart';
+import 'package:fin_glow/presentation/widgets/custom_app_bar.dart';
 
-class SeminaryAndEventsScreen extends StatefulWidget {
+class SeminaryAndEventsScreen extends StatelessWidget {
   const SeminaryAndEventsScreen({super.key});
 
   @override
-  SeminaryAndEventsScreenState createState() => SeminaryAndEventsScreenState();
-}
-
-class SeminaryAndEventsScreenState extends State<SeminaryAndEventsScreen> {
-  late Future<List<Event>> futureEvents;
-  final Logger logger = Logger();
-
-  @override
-  void initState() {
-    super.initState();
-    futureEvents = EventRepository().fetchEvents();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    // Dispatch FetchEvents event when the widget is first built
+    context.read<EventBloc>().add(FetchEvents());
+
     return Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -61,35 +52,36 @@ class SeminaryAndEventsScreenState extends State<SeminaryAndEventsScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  FutureBuilder<List<Event>>(
-                    future: futureEvents,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
+                  BlocBuilder<EventBloc, EventState>(
+                    builder: (context, state) {
+                      if (state is EventLoading) {
                         return const CircularProgressIndicator();
-                      } else if (snapshot.hasError) {
-                        logger.e(
-                            'Error al cargar los eventos: ${snapshot.error}');
+                      } else if (state is EventError) {
+                        Logger()
+                            .e('Error al cargar los eventos: ${state.message}');
                         return Text(
-                            'Error al cargar los eventos: ${snapshot.error}');
-                      } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Text('No hay eventos disponibles');
+                            'Error al cargar los eventos: ${state.message}');
+                      } else if (state is EventLoaded) {
+                        final events = state.events;
+                        if (events.isEmpty) {
+                          return const Text('No hay eventos disponibles');
+                        }
+                        return Column(
+                          children: events.map((event) {
+                            return Column(
+                              children: [
+                                _buildOptionContainer(
+                                  icon: _getIconData(event.icon),
+                                  title: event.title,
+                                  description: event.description,
+                                ),
+                                const SizedBox(height: 40)
+                              ],
+                            );
+                          }).toList(),
+                        );
                       }
-
-                      final events = snapshot.data!;
-                      return Column(
-                        children: events.map((event) {
-                          return Column(
-                            children: [
-                              _buildOptionContainer(
-                                icon: _getIconData(event.icon),
-                                title: event.title,
-                                description: event.description,
-                              ),
-                              const SizedBox(height: 40)
-                            ],
-                          );
-                        }).toList(),
-                      );
+                      return const Text('Estado desconocido');
                     },
                   ),
                   const SizedBox(height: 120),
