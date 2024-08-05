@@ -7,6 +7,29 @@ import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:shared_preferences/shared_preferences.dart';
 
+class IconDataConverter {
+  static IconData getIconFromString(String iconString) {
+    switch (iconString) {
+      case "Bootstrap.person":
+        return Bootstrap.person;
+      case "Bootstrap.file-text":
+        return Bootstrap.file_text;
+      case "Bootstrap.lock":
+        return Bootstrap.lock;
+      case "Bootstrap.credit-card":
+        return Bootstrap.credit_card;
+      case "Bootstrap.map":
+        return Bootstrap.map;
+      case "Bootstrap.eye":
+        return Bootstrap.eye;
+      case "Bootstrap.bell":
+        return Bootstrap.bell;
+      default:
+        return Icons.help; // Ícono por defecto
+    }
+  }
+}
+
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
 
@@ -192,7 +215,8 @@ class ProfileScreenState extends State<ProfileScreen> {
         children: [
           Row(
             children: [
-              Icon(option.icon, color: Colors.white),
+              Icon(IconDataConverter.getIconFromString(option.icon),
+                  color: Colors.white), // Conversión del icono
               const SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,

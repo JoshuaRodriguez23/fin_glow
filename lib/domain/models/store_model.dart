@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'store_model.g.dart';
+
+@JsonSerializable()
 class StoreViewData {
   final String title;
   final List<Promotion> promotions;
@@ -11,24 +16,12 @@ class StoreViewData {
     required this.promotionsTitle,
   });
 
-  factory StoreViewData.fromJson(Map<String, dynamic> json) {
-    var promotionsList = json['promotions'] as List;
-    List<Promotion> promotionsData =
-        promotionsList.map((i) => Promotion.fromJson(i)).toList();
-
-    var navbarOptionsList = json['navbarOptions'] as List;
-    List<String> navbarOptionsData =
-        navbarOptionsList.map((i) => i.toString()).toList();
-
-    return StoreViewData(
-      title: json['title'],
-      promotions: promotionsData,
-      navbarOptions: navbarOptionsData,
-      promotionsTitle: json['promotionsTitle'],
-    );
-  }
+  factory StoreViewData.fromJson(Map<String, dynamic> json) =>
+      _$StoreViewDataFromJson(json);
+  Map<String, dynamic> toJson() => _$StoreViewDataToJson(this);
 }
 
+@JsonSerializable()
 class Promotion {
   final String image;
   final String route;
@@ -38,10 +31,7 @@ class Promotion {
     required this.route,
   });
 
-  factory Promotion.fromJson(Map<String, dynamic> json) {
-    return Promotion(
-      image: json['image'],
-      route: json['route'],
-    );
-  }
+  factory Promotion.fromJson(Map<String, dynamic> json) =>
+      _$PromotionFromJson(json);
+  Map<String, dynamic> toJson() => _$PromotionToJson(this);
 }

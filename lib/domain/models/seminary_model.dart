@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'seminary_model.g.dart';
+
+@JsonSerializable()
 class Event {
   final String icon;
   final String title;
@@ -9,12 +14,6 @@ class Event {
     required this.description,
   });
 
-  factory Event.fromJson(Map<String, dynamic> json) {
-    return Event(
-      icon: json['icon'] ?? 'default_icon', // Valor por defecto
-      title: json['title'] ?? 'Sin título', // Valor por defecto
-      description:
-          json['description'] ?? 'Sin descripción', // Valor por defecto
-    );
-  }
+  factory Event.fromJson(Map<String, dynamic> json) => _$EventFromJson(json);
+  Map<String, dynamic> toJson() => _$EventToJson(this);
 }

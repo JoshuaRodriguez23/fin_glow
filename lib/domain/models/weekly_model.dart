@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'weekly_model.g.dart';
+
+@JsonSerializable()
 class WeeklyViewData {
   final String title;
   final double incomeAmount;
@@ -11,20 +16,12 @@ class WeeklyViewData {
     required this.barChartData,
   });
 
-  factory WeeklyViewData.fromJson(Map<String, dynamic> json) {
-    var barChartList = json['barChartData'] as List;
-    List<BarChartData> barChartDataList =
-        barChartList.map((i) => BarChartData.fromJson(i)).toList();
-
-    return WeeklyViewData(
-      title: json['title'],
-      incomeAmount: json['income']['amount'],
-      expensesAmount: json['expenses']['amount'],
-      barChartData: barChartDataList,
-    );
-  }
+  factory WeeklyViewData.fromJson(Map<String, dynamic> json) =>
+      _$WeeklyViewDataFromJson(json);
+  Map<String, dynamic> toJson() => _$WeeklyViewDataToJson(this);
 }
 
+@JsonSerializable()
 class BarChartData {
   final String month;
   final double income;
@@ -36,13 +33,7 @@ class BarChartData {
     required this.expenses,
   });
 
-  factory BarChartData.fromJson(Map<String, dynamic> json) {
-    return BarChartData(
-      month: json['month'],
-      income:
-          (json['income'] as num).toDouble(), // Asegúrate de convertir a double
-      expenses: (json['expenses'] as num)
-          .toDouble(), // Asegúrate de convertir a double
-    );
-  }
+  factory BarChartData.fromJson(Map<String, dynamic> json) =>
+      _$BarChartDataFromJson(json);
+  Map<String, dynamic> toJson() => _$BarChartDataToJson(this);
 }

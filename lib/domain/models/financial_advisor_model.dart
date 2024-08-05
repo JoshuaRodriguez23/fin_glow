@@ -1,3 +1,8 @@
+import 'package:json_annotation/json_annotation.dart';
+
+part 'financial_advisor_model.g.dart';
+
+@JsonSerializable()
 class FinancialAdvisorViewData {
   final String title;
   final String question;
@@ -9,19 +14,12 @@ class FinancialAdvisorViewData {
     required this.options,
   });
 
-  factory FinancialAdvisorViewData.fromJson(Map<String, dynamic> json) {
-    var optionsList = json['options'] as List;
-    List<Option> optionsData =
-        optionsList.map((i) => Option.fromJson(i)).toList();
-
-    return FinancialAdvisorViewData(
-      title: json['title'],
-      question: json['question'],
-      options: optionsData,
-    );
-  }
+  factory FinancialAdvisorViewData.fromJson(Map<String, dynamic> json) =>
+      _$FinancialAdvisorViewDataFromJson(json);
+  Map<String, dynamic> toJson() => _$FinancialAdvisorViewDataToJson(this);
 }
 
+@JsonSerializable()
 class Option {
   final String icon;
   final String title;
@@ -33,11 +31,6 @@ class Option {
     required this.subtitle,
   });
 
-  factory Option.fromJson(Map<String, dynamic> json) {
-    return Option(
-      icon: json['icon'],
-      title: json['title'],
-      subtitle: json['subtitle'],
-    );
-  }
+  factory Option.fromJson(Map<String, dynamic> json) => _$OptionFromJson(json);
+  Map<String, dynamic> toJson() => _$OptionToJson(this);
 }
