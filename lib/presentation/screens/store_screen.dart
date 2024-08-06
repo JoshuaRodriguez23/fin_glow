@@ -63,6 +63,7 @@ class StoreScreenState extends State<StoreScreen> {
                 ),
                 child: SafeArea(
                   child: SingleChildScrollView(
+                    // Habilitar desplazamiento
                     child: Column(
                       children: [
                         CustomAppBar(title: storeData.title),
@@ -171,6 +172,7 @@ class StoreScreenState extends State<StoreScreen> {
                               },
                             ),
                             const SizedBox(height: 40),
+                            // Usar Expanded para que PromotionsScreen ocupe el espacio restante
                             SizedBox(
                               height: MediaQuery.of(context).size.height * 0.5,
                               child: _views[_currentIndex2],

@@ -1,5 +1,8 @@
 import 'package:fin_glow/domain/repositories/profile_data_repository.dart';
 import 'package:fin_glow/domain/repositories/seminary_data_repository.dart';
+import 'package:fin_glow/domain/repositories/services_repository.dart';
+import 'package:fin_glow/domain/usecases/services_usecase.dart';
+import 'package:fin_glow/presentation/bloc/bloc/services_bloc.dart';
 import 'package:fin_glow/presentation/widgets/splashscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -39,6 +42,8 @@ class MyApp extends StatelessWidget {
     final profileUseCase = FetchAndValidateProfileData(profileRepository);
     final fetchSeminaryEvents = FetchSeminaryEvents(eventRepository);
     final weeklyDataUseCase = WeeklyDataUseCase(weeklyRepository);
+    final servicesRepository = ServicesRepository();
+    final servicesUseCase = ServicesUseCase(repository: servicesRepository);
 
     return MultiBlocProvider(
       providers: [
@@ -55,6 +60,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<WeeklyBloc>(
           create: (context) => WeeklyBloc(weeklyDataUseCase),
+        ),
+        BlocProvider<ServicesBloc>(
+          create: (context) => ServicesBloc(servicesUseCase),
         ),
       ],
       child: MaterialApp(
