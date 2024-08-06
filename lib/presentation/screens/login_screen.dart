@@ -122,8 +122,8 @@ class LoginScreen extends StatelessWidget {
               LoginButton(
                 onPressed: () {
                   final loginModel = LoginModel(
-                    phone: phoneController.text,
-                    password: passwordController.text,
+                    phone: "2722088800",
+                    password: "Joshrolo23",
                   );
                   BlocProvider.of<LoginBloc>(context)
                       .add(LoginSubmitEvent(loginModel));
