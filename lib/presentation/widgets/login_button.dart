@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 
 class LoginButton extends StatelessWidget {
-  const LoginButton({super.key});
+  final VoidCallback? onPressed;
+
+  const LoginButton({super.key, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return ElevatedButton(
-      onPressed: () {
-        Navigator.pushNamed(context, '/home');
-      },
+      onPressed: onPressed,
       style: ElevatedButton.styleFrom(
         backgroundColor: const Color.fromRGBO(10, 89, 89, 1),
         foregroundColor: Colors.white,

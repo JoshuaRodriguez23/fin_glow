@@ -14,7 +14,7 @@ RegisterModel _$RegisterModelFromJson(Map<String, dynamic> json) =>
       rfc: json['rfc'] as String,
       phone: json['phone'] as String,
       password: json['password'] as String,
-      idBank: (json['idBank'] as num?)?.toInt() ?? 9,
+      idBank: (json['idBank'] as num).toInt(),
     );
 
 Map<String, dynamic> _$RegisterModelToJson(RegisterModel instance) =>

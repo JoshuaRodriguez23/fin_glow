@@ -5,7 +5,7 @@ import 'package:logger/logger.dart';
 class RegisterRepositoryImpl {
   final Dio _dio = Dio();
   Logger logger = Logger();
-  @override
+
   Future<void> submitUser(RegisterModel register) async {
     try {
       await _dio.post('https://apimoviles-production.up.railway.app/users',

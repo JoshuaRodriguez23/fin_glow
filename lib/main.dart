@@ -1,21 +1,20 @@
-import 'package:fin_glow/domain/repositories/register_repository.dart';
-import 'package:fin_glow/domain/repositories/store_data_repository.dart';
-import 'package:fin_glow/domain/usecases/register_usecase.dart';
-import 'package:fin_glow/presentation/bloc/bloc/register_bloc.dart';
-import 'package:fin_glow/presentation/screens/transfer_screen.dart';
+import 'package:fin_glow/domain/repositories/profile_data_repository.dart';
+import 'package:fin_glow/domain/repositories/seminary_data_repository.dart';
+import 'package:fin_glow/presentation/widgets/splashscreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fin_glow/domain/repositories/store_data_repository.dart';
+import 'package:fin_glow/domain/repositories/weekly_data_repository.dart';
+import 'package:fin_glow/domain/repositories/register_repository.dart';
 import 'package:fin_glow/domain/usecases/profile_usecase.dart';
 import 'package:fin_glow/domain/usecases/seminary_usecase.dart';
 import 'package:fin_glow/domain/usecases/weekly_usecase.dart';
-import 'package:fin_glow/domain/repositories/seminary_data_repository.dart';
-import 'package:fin_glow/domain/repositories/profile_data_repository.dart';
-import 'package:fin_glow/domain/repositories/weekly_data_repository.dart';
-import 'package:fin_glow/presentation/bloc/bloc/seminary_bloc.dart';
+import 'package:fin_glow/domain/usecases/register_usecase.dart';
 import 'package:fin_glow/presentation/bloc/bloc/profile_bloc.dart';
+import 'package:fin_glow/presentation/bloc/bloc/seminary_bloc.dart';
 import 'package:fin_glow/presentation/bloc/bloc/store_bloc.dart';
 import 'package:fin_glow/presentation/bloc/bloc/weekly_bloc.dart';
-import 'package:fin_glow/presentation/widgets/splashscreen.dart';
+import 'package:fin_glow/presentation/bloc/bloc/register_bloc.dart';
 import 'package:fin_glow/presentation/screens/login_screen.dart';
 import 'package:fin_glow/presentation/screens/register_screen.dart';
 import 'package:fin_glow/presentation/screens/home_screen.dart';
@@ -25,6 +24,7 @@ import 'package:fin_glow/presentation/screens/card_details_screen.dart';
 import 'package:fin_glow/presentation/screens/profile_screen.dart';
 import 'package:fin_glow/presentation/screens/financial_advisor_screen.dart';
 import 'package:fin_glow/presentation/screens/seminary_and_events_screen.dart';
+import 'package:fin_glow/presentation/screens/transfer_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -62,8 +62,7 @@ class MyApp extends StatelessWidget {
           create: (context) => WeeklyBloc(weeklyDataUseCase),
         ),
         BlocProvider<RegisterBloc>(
-          create: (context) =>
-              RegisterBloc(submitRegister), // Aquí se pasa el argumento
+          create: (context) => RegisterBloc(submitRegister),
         ),
       ],
       child: MaterialApp(
