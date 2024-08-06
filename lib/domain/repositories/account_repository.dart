@@ -9,6 +9,8 @@ class AccountRepository {
     try {
       final _dio = await DioClient.getInstance();
       final response = await _dio.get('/accounts/me');
+      logger.d(response);
+      logger.d(AccountModel.fromJson(response.data['data']));
       return AccountModel.fromJson(response.data['data']);
     } catch (e) {
       logger.d(e);

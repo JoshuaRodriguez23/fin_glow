@@ -8,6 +8,7 @@ import 'package:fin_glow/presentation/widgets/custom_text.dart';
 import 'package:fin_glow/presentation/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -51,20 +52,26 @@ class RegisterScreenState extends State<RegisterScreen> {
             child: Center(
               child: BlocProvider(
                 create: (context) => RegisterBloc(submitUser),
-                child: BlocBuilder<RegisterBloc, RegisterState>(
+                child: BlocConsumer<RegisterBloc, RegisterState>(
+                  listener: (context, state) {
+                    if (state is RegisterSuccess) {
+                      Navigator.pushNamed(context, '/login');
+                    }
+                  },
                   builder: (context, state) {
                     if (state is RegisterInitial) {
                       return buildForm(context);
                     } else if (state is RegisterLoading) {
                       return const CircularProgressIndicator();
-                    } else if (state is RegisterSuccess) {
-                      return const Text('Register data submitted successfully');
                     } else if (state is RegisterError) {
                       return SingleChildScrollView(
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(state.message),
+                            Text(
+                              state.message,
+                              style: const TextStyle(color: Colors.white),
+                            ),
                             const SizedBox(height: 16),
                             buildForm(context),
                           ],
@@ -221,6 +228,7 @@ class RegisterScreenState extends State<RegisterScreen> {
               ElevatedButton(
                 onPressed: _acceptedTerms
                     ? () {
+                        Logger logger = Logger();
                         final user = RegisterModel(
                           name: nameController.text,
                           lastname: lastnameController.text,
@@ -228,8 +236,9 @@ class RegisterScreenState extends State<RegisterScreen> {
                           rfc: rfcController.text,
                           phone: phoneController.text,
                           password: passwordController.text,
-                          idBank: 9,
+                          id_bank: 9,
                         );
+                        logger.d(user.toJson());
                         BlocProvider.of<RegisterBloc>(context)
                             .add(SubmitRegisterEvent(user));
                       }

@@ -26,8 +26,6 @@ class HomeScreen extends StatefulWidget {
 
 class HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
-  double availableAmount = 0.0;
-  double totalAmount = 0.0;
   final CashDataRepository cashDataRepository = CashDataRepository();
 
   List<Map<String, dynamic>> movements = [];
@@ -105,6 +103,9 @@ class HomeScreenState extends State<HomeScreen> {
         if (state is UserInitial) {
           return Container();
         } else if (state is UserSuccess) {
+          final availableAmount = state.account.balance;
+          final totalAmount = availableAmount! * 2;
+
           return Column(
             children: [
               Padding(
@@ -112,7 +113,7 @@ class HomeScreenState extends State<HomeScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    // ProfilePictureWidget(),
+                    // const ProfilePictureWidget(),
                     const SizedBox(width: 10),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,32 +152,32 @@ class HomeScreenState extends State<HomeScreen> {
                         fontWeight: FontWeight.w900,
                       ),
                     ),
-                    // Text(
-                    //   state.account.balance.toString(),
-                    //   style: const TextStyle(
-                    //     fontFamily: 'Montserrat',
-                    //     color: Colors.white,
-                    //     fontWeight: FontWeight.w500,
-                    //   ),
-                    // ),
+                    Text(
+                      state.account.balance.toString(),
+                      style: const TextStyle(
+                        fontFamily: 'Montserrat',
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
                   ],
                 ),
               ),
               const SizedBox(height: 15),
-              // Padding(
-              //   padding: const EdgeInsets.symmetric(horizontal: 30.0),
-              //   child: Column(
-              //     crossAxisAlignment: CrossAxisAlignment.start,
-              //     children: [
-              //       const SizedBox(height: 5),
-              //       LinearGradientIndicator(
-              //         value:
-              //             totalAmount > 0 ? availableAmount / totalAmount : 0.0,
-              //       ),
-              //       const SizedBox(height: 10),
-              //     ],
-              //   ),
-              // ),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 5),
+                    LinearGradientIndicator(
+                      value:
+                          totalAmount > 0 ? availableAmount / totalAmount : 0.0,
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                ),
+              ),
               const SizedBox(height: 20),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 50.0),

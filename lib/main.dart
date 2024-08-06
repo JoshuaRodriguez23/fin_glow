@@ -5,16 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fin_glow/domain/repositories/store_data_repository.dart';
 import 'package:fin_glow/domain/repositories/weekly_data_repository.dart';
-import 'package:fin_glow/domain/repositories/register_repository.dart';
 import 'package:fin_glow/domain/usecases/profile_usecase.dart';
 import 'package:fin_glow/domain/usecases/seminary_usecase.dart';
 import 'package:fin_glow/domain/usecases/weekly_usecase.dart';
-import 'package:fin_glow/domain/usecases/register_usecase.dart';
 import 'package:fin_glow/presentation/bloc/bloc/profile_bloc.dart';
 import 'package:fin_glow/presentation/bloc/bloc/seminary_bloc.dart';
 import 'package:fin_glow/presentation/bloc/bloc/store_bloc.dart';
 import 'package:fin_glow/presentation/bloc/bloc/weekly_bloc.dart';
-import 'package:fin_glow/presentation/bloc/bloc/register_bloc.dart';
 import 'package:fin_glow/presentation/screens/login_screen.dart';
 import 'package:fin_glow/presentation/screens/register_screen.dart';
 import 'package:fin_glow/presentation/screens/home_screen.dart';
@@ -42,8 +39,6 @@ class MyApp extends StatelessWidget {
     final profileUseCase = FetchAndValidateProfileData(profileRepository);
     final fetchSeminaryEvents = FetchSeminaryEvents(eventRepository);
     final weeklyDataUseCase = WeeklyDataUseCase(weeklyRepository);
-    final registerRepository = RegisterRepositoryImpl();
-    final submitRegister = SubmitRegister(registerRepository);
 
     return MultiBlocProvider(
       providers: [
@@ -60,9 +55,6 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<WeeklyBloc>(
           create: (context) => WeeklyBloc(weeklyDataUseCase),
-        ),
-        BlocProvider<RegisterBloc>(
-          create: (context) => RegisterBloc(submitRegister),
         ),
       ],
       child: MaterialApp(

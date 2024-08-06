@@ -9,6 +9,8 @@ class UserRepository {
     try {
       final _dio = await DioClient.getInstance();
       final response = await _dio.get('/users');
+      logger.d(response);
+      logger.d(UserModel.fromJson(response.data['data']));
       return UserModel.fromJson(response.data['data']);
     } catch (e) {
       logger.d(e);

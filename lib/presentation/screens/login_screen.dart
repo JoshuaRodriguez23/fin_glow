@@ -6,6 +6,7 @@ import 'package:fin_glow/presentation/bloc/event/login_event.dart';
 import 'package:fin_glow/presentation/bloc/state/login_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:logger/logger.dart';
 import '../widgets/custom_text_field.dart';
 import '../widgets/login_button.dart';
 import '../widgets/divider_text.dart';
@@ -121,10 +122,13 @@ class LoginScreen extends StatelessWidget {
               const SizedBox(height: 30),
               LoginButton(
                 onPressed: () {
+                  Logger logger = Logger();
                   final loginModel = LoginModel(
-                    phone: "2722088800",
-                    password: "Joshrolo23",
+                    phone: phoneController.text,
+                    password: passwordController.text,
                   );
+                  logger.d(phoneController.text);
+                  logger.d(passwordController.text);
                   BlocProvider.of<LoginBloc>(context)
                       .add(LoginSubmitEvent(loginModel));
                 },
