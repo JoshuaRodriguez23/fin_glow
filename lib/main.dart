@@ -1,4 +1,7 @@
+import 'package:fin_glow/domain/repositories/register_repository.dart';
 import 'package:fin_glow/domain/repositories/store_data_repository.dart';
+import 'package:fin_glow/domain/usecases/register_usecase.dart';
+import 'package:fin_glow/presentation/bloc/bloc/register_bloc.dart';
 import 'package:fin_glow/presentation/screens/transfer_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -22,6 +25,7 @@ import 'package:fin_glow/presentation/screens/card_details_screen.dart';
 import 'package:fin_glow/presentation/screens/profile_screen.dart';
 import 'package:fin_glow/presentation/screens/financial_advisor_screen.dart';
 import 'package:fin_glow/presentation/screens/seminary_and_events_screen.dart';
+import 'package:dio/dio.dart';
 
 void main() {
   runApp(const MyApp());
@@ -39,6 +43,8 @@ class MyApp extends StatelessWidget {
     final profileUseCase = FetchAndValidateProfileData(profileRepository);
     final fetchSeminaryEvents = FetchSeminaryEvents(eventRepository);
     final weeklyDataUseCase = WeeklyDataUseCase(weeklyRepository);
+    final registerRepository = RegisterRepository(Dio());
+    final registerUseCase = RegisterUseCase(registerRepository);
 
     return MultiBlocProvider(
       providers: [
@@ -55,6 +61,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider<WeeklyBloc>(
           create: (context) => WeeklyBloc(weeklyDataUseCase),
+        ),
+        BlocProvider<RegisterBloc>(
+          create: (context) => RegisterBloc(registerUseCase),
         ),
       ],
       child: MaterialApp(
