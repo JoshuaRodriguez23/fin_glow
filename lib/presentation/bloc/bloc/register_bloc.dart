@@ -4,20 +4,16 @@ import 'package:fin_glow/presentation/bloc/event/register_event.dart';
 import 'package:fin_glow/presentation/bloc/state/register_state.dart';
 
 class RegisterBloc extends Bloc<RegisterEvent, RegisterState> {
-  final RegisterUseCase registerUseCase;
+  final SubmitRegister submitRegister;
 
-  RegisterBloc(this.registerUseCase) : super(RegisterInitial()) {
-    on<RegisterSubmit>((event, emit) async {
+  RegisterBloc(this.submitRegister) : super(RegisterInitial()) {
+    on<SubmitRegisterEvent>((event, emit) async {
       emit(RegisterLoading());
       try {
-        await registerUseCase.execute(event.registerModel);
+        await submitRegister(event.register);
         emit(RegisterSuccess());
       } catch (e) {
-        if (e is Exception) {
-          emit(RegisterFailure(e.toString()));
-        } else {
-          emit(RegisterFailure('Error al registrarse'));
-        }
+        emit(RegisterError('Failed to submit Register'));
       }
     });
   }

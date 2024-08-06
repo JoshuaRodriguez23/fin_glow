@@ -25,7 +25,6 @@ import 'package:fin_glow/presentation/screens/card_details_screen.dart';
 import 'package:fin_glow/presentation/screens/profile_screen.dart';
 import 'package:fin_glow/presentation/screens/financial_advisor_screen.dart';
 import 'package:fin_glow/presentation/screens/seminary_and_events_screen.dart';
-import 'package:dio/dio.dart';
 
 void main() {
   runApp(const MyApp());
@@ -43,8 +42,8 @@ class MyApp extends StatelessWidget {
     final profileUseCase = FetchAndValidateProfileData(profileRepository);
     final fetchSeminaryEvents = FetchSeminaryEvents(eventRepository);
     final weeklyDataUseCase = WeeklyDataUseCase(weeklyRepository);
-    final registerRepository = RegisterRepository(Dio());
-    final registerUseCase = RegisterUseCase(registerRepository);
+    final registerRepository = RegisterRepositoryImpl();
+    final submitRegister = SubmitRegister(registerRepository);
 
     return MultiBlocProvider(
       providers: [
@@ -63,7 +62,8 @@ class MyApp extends StatelessWidget {
           create: (context) => WeeklyBloc(weeklyDataUseCase),
         ),
         BlocProvider<RegisterBloc>(
-          create: (context) => RegisterBloc(registerUseCase),
+          create: (context) =>
+              RegisterBloc(submitRegister), // Aquí se pasa el argumento
         ),
       ],
       child: MaterialApp(

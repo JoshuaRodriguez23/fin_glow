@@ -19,7 +19,7 @@ class RegisterModel {
     required this.rfc,
     required this.phone,
     required this.password,
-    this.idBank = 9,
+    required this.idBank,
   });
 
   factory RegisterModel.fromJson(Map<String, dynamic> json) =>

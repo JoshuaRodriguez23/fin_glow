@@ -1,9 +1,18 @@
+import 'package:equatable/equatable.dart';
 import 'package:fin_glow/domain/models/register_model.dart';
 
-abstract class RegisterEvent {}
+abstract class RegisterEvent extends Equatable {
+  const RegisterEvent();
 
-class RegisterSubmit extends RegisterEvent {
-  final RegisterModel registerModel;
+  @override
+  List<Object> get props => [];
+}
 
-  RegisterSubmit(this.registerModel);
+class SubmitRegisterEvent extends RegisterEvent {
+  final RegisterModel register;
+
+  const SubmitRegisterEvent(this.register);
+
+  @override
+  List<Object> get props => [register];
 }

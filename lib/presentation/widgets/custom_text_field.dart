@@ -76,6 +76,7 @@ class CustomTextFieldState extends State<CustomTextField> {
                 borderSide:
                     BorderSide(color: Color.fromRGBO(34, 221, 187, 0.378)),
               ),
+              errorText: widget.errorText,
             ),
             obscureText: widget.obscureText,
             validator: widget.validator,

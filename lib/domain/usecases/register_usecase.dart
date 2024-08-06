@@ -1,12 +1,12 @@
 import 'package:fin_glow/domain/models/register_model.dart';
 import 'package:fin_glow/domain/repositories/register_repository.dart';
 
-class RegisterUseCase {
-  final RegisterRepository repository;
+class SubmitRegister {
+  final RegisterRepositoryImpl repository;
 
-  RegisterUseCase(this.repository);
+  SubmitRegister(this.repository);
 
-  Future<void> execute(RegisterModel registerModel) {
-    return repository.register(registerModel);
+  Future<void> call(RegisterModel register) async {
+    await repository.submitUser(register);
   }
 }
