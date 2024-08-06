@@ -1,7 +1,10 @@
+import 'package:fin_glow/domain/repositories/movements_repository.dart';
 import 'package:fin_glow/domain/repositories/profile_data_repository.dart';
 import 'package:fin_glow/domain/repositories/seminary_data_repository.dart';
 import 'package:fin_glow/domain/repositories/services_repository.dart';
+import 'package:fin_glow/domain/usecases/movements_usecase.dart';
 import 'package:fin_glow/domain/usecases/services_usecase.dart';
+import 'package:fin_glow/presentation/bloc/bloc/movements_bloc.dart';
 import 'package:fin_glow/presentation/bloc/bloc/services_bloc.dart';
 import 'package:fin_glow/presentation/widgets/splashscreen.dart';
 import 'package:flutter/material.dart';
@@ -64,6 +67,10 @@ class MyApp extends StatelessWidget {
         BlocProvider<ServicesBloc>(
           create: (context) => ServicesBloc(servicesUseCase),
         ),
+        BlocProvider<MovementBloc>(
+          create: (context) =>
+              MovementBloc(MovementUseCase(repository: MovementsRepository())),
+        ),
       ],
       child: MaterialApp(
         title: 'FinGlow',
@@ -75,7 +82,7 @@ class MyApp extends StatelessWidget {
           '/register': (context) => const RegisterScreen(),
           '/home': (context) => const HomeScreen(),
           '/seeAll': (context) => const SeeAllScreen(),
-          '/seeMore': (context) => const ViewMoreScreen(),
+          // '/seeMore': (context) => const ViewMoreScreen(),
           '/cardDetails': (context) => const CardDetailsScreen(),
           '/profile': (context) => const ProfileScreen(),
           '/financialAdvisor': (context) => const FinancialAdvisorScreen(),

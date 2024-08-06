@@ -7,17 +7,28 @@ import 'package:fin_glow/presentation/bloc/state/login_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:logger/logger.dart';
-import '../widgets/custom_text_field.dart';
 import '../widgets/login_button.dart';
 import '../widgets/divider_text.dart';
 import '../widgets/custom_text.dart';
 
-class LoginScreen extends StatelessWidget {
+class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+
+  @override
+  LoginScreenState createState() => LoginScreenState();
+}
+
+class LoginScreenState extends State<LoginScreen> {
+  final TextEditingController phoneController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+  bool _obscurePassword = true;
+  String? phoneError;
+  String? passwordError;
 
   @override
   Widget build(BuildContext context) {
     final loginUseCase = LoginUseCase(LoginRepository());
+
     return Scaffold(
       body: GestureDetector(
         onTap: () {
@@ -46,24 +57,24 @@ class LoginScreen extends StatelessWidget {
                   },
                   child: BlocBuilder<LoginBloc, LoginState>(
                     builder: (context, state) {
-                      if (state is LoginInitial) {
-                        return buildForm(context);
-                      } else if (state is LoginLoading) {
-                        return const CircularProgressIndicator();
-                      } else if (state is LoginError) {
-                        return SingleChildScrollView(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Text(state.message),
-                              const SizedBox(height: 16),
-                              buildForm(context),
-                            ],
-                          ),
-                        );
-                      } else {
-                        return Container();
-                      }
+                      return SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (state is LoginError)
+                              const Chip(
+                                backgroundColor: Colors.redAccent,
+                                label: Text(
+                                  'Teléfono o contraseña incorrectos',
+                                  style: TextStyle(color: Colors.white),
+                                ),
+                              ),
+                            buildForm(context, state),
+                            if (state is LoginLoading)
+                              const CircularProgressIndicator(),
+                          ],
+                        ),
+                      );
                     },
                   ),
                 ),
@@ -75,54 +86,150 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Widget buildForm(BuildContext context) {
-    final TextEditingController phoneController = TextEditingController();
-    final TextEditingController passwordController = TextEditingController();
-
-    return SingleChildScrollView(
+  Widget buildForm(BuildContext context, LoginState state) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: 20.0),
       child: Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(horizontal: 20.0),
-        child: Container(
-          margin: const EdgeInsets.only(top: 30.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Bienvenido a FinGlow!',
-                style: TextStyle(
-                  fontFamily: 'Montserrat',
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+        margin: const EdgeInsets.only(top: 30.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text(
+              'Bienvenido a FinGlow!',
+              style: TextStyle(
+                fontFamily: 'Montserrat',
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 20),
+            const CustomText(
+              text: 'Tu éxito financiero comienza hoy.',
+              size: 15,
+            ),
+            const SizedBox(height: 20),
+            Image.asset(
+              'assets/images/logo_vertical.png',
+              width: 200,
+              height: 200,
+            ),
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: phoneController,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.white,
+              ),
+              keyboardType: TextInputType.phone,
+              decoration: const InputDecoration(
+                labelText: 'Teléfono',
+                labelStyle: TextStyle(
+                  fontSize: 13,
+                  color: Colors.white54,
+                ),
+                filled: true,
+                fillColor: Color.fromARGB(105, 4, 38, 92),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderSide: BorderSide.none,
+                ),
+                errorBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderSide: BorderSide(color: Colors.red),
                 ),
               ),
-              const SizedBox(height: 20),
-              const CustomText(
-                text: 'Tu éxito financiero comienza hoy.',
-                size: 15,
+              maxLength: 10,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  setState(() {
+                    phoneError = 'Este campo no puede estar vacío';
+                  });
+                  return '';
+                } else {
+                  setState(() {
+                    phoneError = null;
+                  });
+                }
+                if (value.length < 10) {
+                  return 'El teléfono debe tener 10 dígitos';
+                }
+                if (!RegExp(r'^\d+$').hasMatch(value)) {
+                  return 'Solo se permiten números';
+                }
+                return null;
+              },
+            ),
+            if (phoneError != null)
+              Text(
+                phoneError!,
+                style: const TextStyle(color: Colors.red, fontSize: 12),
               ),
-              const SizedBox(height: 20),
-              Image.asset(
-                'assets/images/logo_vertical.png',
-                width: 200,
-                height: 200,
+            const SizedBox(height: 20),
+            TextFormField(
+              controller: passwordController,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.white,
               ),
-              const SizedBox(height: 20),
-              CustomTextField(
-                controller: phoneController,
-                label: 'Teléfono',
+              decoration: InputDecoration(
+                labelText: 'Contraseña',
+                labelStyle: const TextStyle(
+                  fontSize: 13,
+                  color: Colors.white54,
+                ),
+                filled: true,
+                fillColor: const Color.fromARGB(105, 4, 38, 92),
+                border: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderSide: BorderSide.none,
+                ),
+                errorBorder: const OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                  borderSide: BorderSide(color: Colors.red),
+                ),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility_off : Icons.visibility,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
               ),
-              const SizedBox(height: 20),
-              CustomTextField(
-                controller: passwordController,
-                label: 'Contraseña',
-                obscureText: true,
+              obscureText: _obscurePassword,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  setState(() {
+                    passwordError = 'Este campo no puede estar vacío';
+                  });
+                  return '';
+                } else {
+                  setState(() {
+                    passwordError = null;
+                  });
+                }
+                if (value.length < 6) {
+                  return 'La contraseña debe tener al menos 6 caracteres';
+                }
+                return null;
+              },
+            ),
+            if (passwordError != null)
+              Text(
+                passwordError!,
+                style: const TextStyle(color: Colors.red, fontSize: 12),
               ),
-              const SizedBox(height: 30),
-              LoginButton(
-                onPressed: () {
-                  Logger logger = Logger();
+            const SizedBox(height: 30),
+            LoginButton(
+              onPressed: () {
+                Logger logger = Logger();
+                if (phoneController.text.isNotEmpty &&
+                    passwordController.text.isNotEmpty) {
                   final loginModel = LoginModel(
                     phone: phoneController.text,
                     password: passwordController.text,
@@ -131,46 +238,46 @@ class LoginScreen extends StatelessWidget {
                   logger.d(passwordController.text);
                   BlocProvider.of<LoginBloc>(context)
                       .add(LoginSubmitEvent(loginModel));
-                },
-              ),
-              const SizedBox(height: 20),
-              const CustomText(
-                text: 'Recuperar Contraseña',
-                size: 12,
-              ),
-              const SizedBox(height: 20),
-              const DividerText(),
-              const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const CustomText(
-                    text: '¿Quieres usar la app de FinGlow?',
-                    size: 12,
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/register');
-                    },
-                    child: const Text(
-                      'Abrir cuenta',
-                      style: TextStyle(
-                        color: Color.fromRGBO(34, 221, 187, 1),
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                      ),
+                }
+              },
+            ),
+            const SizedBox(height: 20),
+            const CustomText(
+              text: 'Recuperar Contraseña',
+              size: 12,
+            ),
+            const SizedBox(height: 20),
+            const DividerText(),
+            const SizedBox(height: 20),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const CustomText(
+                  text: '¿Quieres usar la app de FinGlow?',
+                  size: 12,
+                ),
+                TextButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/register');
+                  },
+                  child: const Text(
+                    'Abrir cuenta',
+                    style: TextStyle(
+                      color: Color.fromRGBO(34, 221, 187, 1),
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const Icon(
-                Icons.fingerprint,
-                color: Colors.white,
-                size: 45,
-              ),
-            ],
-          ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 20),
+            const Icon(
+              Icons.fingerprint,
+              color: Colors.white,
+              size: 45,
+            ),
+          ],
         ),
       ),
     );

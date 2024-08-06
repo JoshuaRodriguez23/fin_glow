@@ -63,7 +63,7 @@ class ExpenseDetailScreen extends StatelessWidget {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                data.date,
+                                data.reference,
                                 style: const TextStyle(
                                     fontSize: 12, color: Colors.white),
                               ),
@@ -81,7 +81,7 @@ class ExpenseDetailScreen extends StatelessWidget {
                               ),
                               const SizedBox(height: 20),
                               Text(
-                                data.title,
+                                data.reference,
                                 style: const TextStyle(
                                     fontSize: 15, color: Colors.white),
                               ),
@@ -135,15 +135,10 @@ class ExpenseDetailScreen extends StatelessWidget {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Icon(
-                                    data.icon,
-                                    size: 24.0,
-                                    color: Colors.white,
-                                  ),
                                   const SizedBox(width: 8),
                                   Expanded(
                                     child: Text(
-                                      data.title,
+                                      data.reference,
                                       style: const TextStyle(
                                           fontSize: 12, color: Colors.white),
                                       overflow: TextOverflow.ellipsis,

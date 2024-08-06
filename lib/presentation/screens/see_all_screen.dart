@@ -1,7 +1,13 @@
 import 'dart:convert';
+import 'package:fin_glow/domain/repositories/movements_repository.dart';
+import 'package:fin_glow/domain/usecases/movements_usecase.dart';
+import 'package:fin_glow/presentation/bloc/bloc/movements_bloc.dart';
+import 'package:fin_glow/presentation/bloc/event/movements_event.dart';
+import 'package:fin_glow/presentation/bloc/state/movements_state.dart';
 import 'package:fin_glow/presentation/screens/details_movement_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:icons_plus/icons_plus.dart';
 import '../widgets/custom_app_bar.dart';
 import '../widgets/pie_chart.dart';
@@ -57,70 +63,89 @@ class SeeAllScreenState extends State<SeeAllScreen> {
             .toList()
         : [];
 
-    return Scaffold(
-      body: GestureDetector(
-        onTap: () {
-          FocusScope.of(context).unfocus();
-        },
-        child: Container(
-          decoration: const BoxDecoration(
-            gradient: RadialGradient(
-              colors: [
-                Color.fromRGBO(1, 19, 48, 1),
-                Color.fromRGBO(4, 38, 92, 1),
-              ],
-              center: Alignment.center,
-              radius: 1.0,
-            ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                const CustomAppBar(
-                  title: 'Historial',
-                ),
-                const SizedBox(height: 20),
-                Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: AspectRatio(
-                    aspectRatio: 2.0,
-                    child: Stack(
+    return BlocProvider(
+      create: (context) =>
+          MovementBloc(MovementUseCase(repository: MovementsRepository()))
+            ..add(GetMovementsEvent()),
+      child: BlocBuilder<MovementBloc, MovementState>(
+        builder: (context, state) {
+          if (state is MovementInitial) {
+            return Container();
+          } else if (state is MovementsSuccess) {
+            return Scaffold(
+              body: GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).unfocus();
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    gradient: RadialGradient(
+                      colors: [
+                        Color.fromRGBO(1, 19, 48, 1),
+                        Color.fromRGBO(4, 38, 92, 1),
+                      ],
+                      center: Alignment.center,
+                      radius: 1.0,
+                    ),
+                  ),
+                  child: SafeArea(
+                    child: Column(
                       children: [
-                        ExpensePieChart(
-                          amazonPercentage:
-                              percentages.isNotEmpty ? percentages[0] : 0.0,
-                          mcdonaldsPercentage:
-                              percentages.length > 1 ? percentages[1] : 0.0,
-                          applePercentage:
-                              percentages.length > 2 ? percentages[2] : 0.0,
-                          homeDepotPercentage:
-                              percentages.length > 3 ? percentages[3] : 0.0,
+                        const CustomAppBar(
+                          title: 'Historial',
                         ),
-                        Center(
-                          child: ExpenseTotalAmount(totalAmount: totalAmount),
+                        const SizedBox(height: 20),
+                        Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: AspectRatio(
+                            aspectRatio: 2.0,
+                            child: Stack(
+                              children: [
+                                ExpensePieChart(
+                                  amazonPercentage: percentages.isNotEmpty
+                                      ? percentages[0]
+                                      : 0.0,
+                                  mcdonaldsPercentage: percentages.length > 1
+                                      ? percentages[1]
+                                      : 0.0,
+                                  applePercentage: percentages.length > 2
+                                      ? percentages[2]
+                                      : 0.0,
+                                  homeDepotPercentage: percentages.length > 3
+                                      ? percentages[3]
+                                      : 0.0,
+                                ),
+                                Center(
+                                  child: ExpenseTotalAmount(
+                                    totalAmount: totalAmount,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
+                        const SizedBox(height: 35),
+                        Expanded(
+                          child: ExpenseList(
+                            items: state.movements.map((movement) {
+                              return ExpenseItemData(
+                                reference: movement.reference,
+                                amount: double.parse(movement.amount),
+                              );
+                            }).toList(),
+                          ),
+                        ),
+                        // const ViewMoreButton(),
                       ],
                     ),
                   ),
                 ),
-                const SizedBox(height: 35),
-                Expanded(
-                  child: ExpenseList(
-                    items: movements.map((movement) {
-                      return ExpenseItemData(
-                        icon: getIconForTitle(movement['title'] as String),
-                        title: movement['title'] as String,
-                        date: movement['date'] as String,
-                        amount: movement['amount'] as double,
-                      );
-                    }).toList(),
-                  ),
-                ),
-                const ViewMoreButton(),
-              ],
-            ),
-          ),
-        ),
+              ),
+            );
+          } else {
+            return Container();
+          }
+        },
       ),
     );
   }
@@ -220,50 +245,46 @@ class ExpenseList extends StatelessWidget {
   }
 }
 
-class ViewMoreButton extends StatelessWidget {
-  const ViewMoreButton({super.key});
+// class ViewMoreButton extends StatelessWidget {
+//   const ViewMoreButton({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 20.0),
-      child: TextButton(
-        onPressed: () {
-          Navigator.pushNamed(context, '/seeMore');
-        },
-        child: const Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Ver más',
-              style: TextStyle(
-                color: Color.fromRGBO(64, 162, 241, 1),
-                fontSize: 18,
-                decoration: TextDecoration.underline,
-              ),
-            ),
-            SizedBox(height: 5),
-            Icon(
-              Bootstrap.chevron_down,
-              color: Colors.white,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     return Padding(
+//       padding: const EdgeInsets.symmetric(vertical: 20.0),
+//       child: TextButton(
+//         onPressed: () {
+//           Navigator.pushNamed(context, '/seeMore');
+//         },
+//         child: const Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             Text(
+//               'Ver más',
+//               style: TextStyle(
+//                 color: Color.fromRGBO(64, 162, 241, 1),
+//                 fontSize: 18,
+//                 decoration: TextDecoration.underline,
+//               ),
+//             ),
+//             SizedBox(height: 5),
+//             Icon(
+//               Bootstrap.chevron_down,
+//               color: Colors.white,
+//             ),
+//           ],
+//         ),
+//       ),
+//     );
+//   }
+// }
 
 class ExpenseItemData {
-  final IconData icon;
-  final String title;
-  final String date;
+  final String reference;
   final double amount;
 
   ExpenseItemData({
-    required this.icon,
-    required this.title,
-    required this.date,
+    required this.reference,
     required this.amount,
   });
 }
@@ -294,18 +315,11 @@ class ExpenseItem extends StatelessWidget {
           borderRadius: BorderRadius.circular(28),
         ),
         child: ListTile(
-          leading: Icon(data.icon, size: 40.0),
           title: Text(
-            data.title,
+            data.reference,
             style: const TextStyle(
               color: Color.fromARGB(255, 64, 161, 241),
               fontSize: 18,
-            ),
-          ),
-          subtitle: Text(
-            data.date,
-            style: const TextStyle(
-              color: Colors.white,
             ),
           ),
           trailing: Text(
@@ -313,6 +327,12 @@ class ExpenseItem extends StatelessWidget {
             style: const TextStyle(
               color: Colors.green,
               fontSize: 18,
+            ),
+          ),
+          subtitle: Text(
+            data.reference,
+            style: const TextStyle(
+              color: Colors.white,
             ),
           ),
         ),
